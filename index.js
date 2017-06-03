@@ -104,6 +104,23 @@ app.post('/webhook/', function(req, res) {
 		// handle incoming postback events in form of JSON object string of type "preview" or "request"
 		if (event.postback) {
 			var load = JSON.parse(event.postback.payload)
+
+			switch(load.type) {
+				case "preview":
+					if (load.url.includes("mp3-preview")) {
+						send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
+						send(sender, audioAttachmentResponse(load.url))
+					} else {
+						send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
+					}
+				case "request":
+					//TODO
+					send(sender, "This feature is coming soon!")
+				default:
+					send(sender, "Sorry, I don't know how to do that yet :(")
+			}
+
+			/*
 			if (load.type === "preview") {
 				if (load.url.includes("mp3-preview")) {
 					send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
@@ -112,11 +129,12 @@ app.post('/webhook/', function(req, res) {
 					send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
 				} 
 			} else if (load.type === "request") {
-				//TODO
 				send(sender, "This feature is coming soon!")
 			} else {
 				send(sender, "Sorry, I don't know how to do that yet :(")
 			}
+			*/
+
 			continue
 		}	
 	}
@@ -124,7 +142,7 @@ app.post('/webhook/', function(req, res) {
 	
 })
 
-// MESSAGE: CHOOSE appropriate response
+// MESSAGE: Choose appropriate response
 bot.responseBuilder = function (text) {
 	var keyword = text.toLowerCase()
 	if (text.includes(" ")) {
@@ -163,9 +181,10 @@ function aboutResponse() {
 
 // MESSAGE: results of search query, in the form of generic template
 function searchResponse(text) {
-	var searchTerm = text.substring(6,200)
+	var searchTerm = text.substring(6,200) // exclude word "about"
 	let series = []
 
+	// conduct search
 	spotifyApi.searchTracks(searchTerm)
   		.then(function(data) {
   			if (data.body.tracks.total == 0) {
@@ -177,6 +196,7 @@ function searchResponse(text) {
     			var numOfResults = 7
     		}
 
+			// build JSON for template message according to messenger api
     		let messageData = {}
     		messageData.attachment = {}
     		messageData.attachment.type = "template"
@@ -184,10 +204,8 @@ function searchResponse(text) {
     		messageData.attachment.payload.template_type = "generic"
     		messageData.attachment.payload.image_aspect_ratio = "square"
     		messageData.attachment.payload.elements = []
-
     		for (var i = 0; i < numOfResults; i++) {
     			var item = data.body.tracks.items[i]
-
     			var element = {}
     			element.title = item.name
     			element.subtitle = item.artists[0].name + " - " + item.album.name
@@ -196,7 +214,6 @@ function searchResponse(text) {
               		"type": "web_url",
               		"url": "https://open.spotify.com/track/" + item.id
               	}
-
     			var button_payload = 
     			element.buttons = [{
 						"type": "postback",
@@ -204,7 +221,6 @@ function searchResponse(text) {
 						"payload": '{"type": "preview","url": "' + item.preview_url
 								+ '","name": "' + item.name 
 								+ '","artist": "' + item.artists[0].name + '"}'
-
 					}, {
 						"type": "postback",
 						"title": "Request",
@@ -218,7 +234,7 @@ function searchResponse(text) {
 			series.push("Here's what I found:")
 			series.push(messageData)
   		}, function(err) {
-    		console.error("Error at method sendSearchResults(): ", err)
+    		console.error("Error at method searchResponse(): ", err)
   		});
 
 	return series
@@ -241,8 +257,8 @@ function audioAttachmentResponse(link) {
 function sendMessages(sender, series, i) {
 	if (i < series.length) {
 		typingIndicator(sender, "on")
-
 		let data = series[i]
+
 		if ((typeof data) == "string") {
 			data = {text:data}
 		}
@@ -258,9 +274,9 @@ function sendMessages(sender, series, i) {
 				}
 			}, function(error, response, body) {
 				if (error) {
-					//console.error("Error at method sendSeries(): ", error)
+					console.error("Error at method sendSeries(): ", error)
 				} else if (response.body.error) {
-					//console.error("Error at method sendSeries(): ", response.body.error)
+					console.error("Error at method sendSeries(): ", response.body.error)
 				}
 				sendMessages(sender, series, i+1)
 			})
@@ -287,9 +303,9 @@ function send(sender, messageData) {
 		}
 	}, function(error, response, body) {
 		if (error) {
-			//console.error("Error at method send(): ", error)
+			console.error("Error at method send(): ", error)
 		} else if (response.body.error) {
-			//console.error("Error at method send(): ", response.body.error)
+			console.error("Error at method send(): ", response.body.error)
 		}
 
 	})
@@ -307,9 +323,9 @@ function typingIndicator(sender, status) {
 		}
 	}, function(error, response, body) {
 		if (error) {
-			//console.error("Error at method typingIndicator(): ", error)
+			console.error("Error at method typingIndicator(): ", error)
 		} else if (response.body.error) {
-			//console.error("Error at method typingIndicator(): ", response.body.error)
+			console.error("Error at method typingIndicator(): ", response.body.error)
 		}
 	})
 }
