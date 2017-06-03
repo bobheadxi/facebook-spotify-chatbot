@@ -93,7 +93,7 @@ app.post('/webhook/', function(req, res) {
 			let text = event.message.text
 			console.log("Message received: " + text)
 
-			let messageDataSeries = responseBuilder(text)
+			let messageDataSeries = bot.responseBuilder(text)
 
 			setTimeout(function(){		
 				sendMessages(sender, messageDataSeries, 0)
