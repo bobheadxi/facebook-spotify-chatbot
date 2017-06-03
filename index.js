@@ -11,6 +11,7 @@ var last_updated = new Date()
 const fbToken = process.env.FB_TOKEN
 const spotifyClientId = process.env.SPOTIFY_CLIENT_ID
 const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET
+const spotifyRedirectUri = process.env.SPOTIFY_REDIRECT_URI
 
 // ------------------------------------------------------------------
 // --------------------- Facebook Messenger API ---------------------
@@ -52,7 +53,7 @@ app.listen(app.get('port'), function() {
 // Source: https://github.com/thelinmichael/spotify-web-api-node, Copyright (c) 2014 Michael Thelin, MIT License
 
 var SpotifyWebApi = require("spotify-web-api-node")
-var redirectUri = "https://fast-refuge-54417.herokuapp.com/callback/"
+var redirectUri = spotifyRedirectUri
 
 // Initiate Spotify stuff
 var spotifyApi = new SpotifyWebApi({
