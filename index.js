@@ -1,4 +1,5 @@
 'use strict'
+var bot = {}
 
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -123,12 +124,12 @@ app.post('/webhook/', function(req, res) {
 })
 
 // MESSAGE: CHOOSE appropriate response
-function responseBuilder(text) {
+bot.responseBuilder = function (text) {
 	var keyword = text.toLowerCase()
 	if (text.includes(" ")) {
 		keyword = text.substring(0, text.indexOf(" "))
 	}
-	
+
 	switch (keyword) {
 		case "about":
 			return aboutResponse()
@@ -151,7 +152,7 @@ function introResponse() {
 // MESSAGE: about the bot message
 function aboutResponse() {
 	let series = []
-	series.push("I am a personal project of Robert Lin, created under the MIT License.")
+	series.push("I am a personal project of Robert Lin.")
 	series.push("I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.")
 	series.push("If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.")
 	series.push("I was last updated on: " + last_updated)
@@ -311,3 +312,6 @@ function typingIndicator(sender, status) {
 		}
 	})
 }
+
+
+module.exports = bot
