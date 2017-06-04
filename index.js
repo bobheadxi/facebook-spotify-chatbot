@@ -96,7 +96,7 @@ app.post('/webhook/', function(req, res) {
 
 			let messageDataSeries = bot.responseBuilder(text)
 
-			setTimeout(function(){		
+			setTimeout(function(){
 				sendMessages(sender, messageDataSeries, 0)
 			},300)
 		}
@@ -113,30 +113,18 @@ app.post('/webhook/', function(req, res) {
 					} else {
 						send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
 					}
+					break
 				case "request":
 					//TODO
 					send(sender, "This feature is coming soon!")
+					break
 				default:
 					send(sender, "Sorry, I don't know how to do that yet :(")
+					break
 			}
-
-			/*
-			if (load.type === "preview") {
-				if (load.url.includes("mp3-preview")) {
-					send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
-					send(sender, audioAttachmentResponse(load.url))
-				} else {
-					send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
-				} 
-			} else if (load.type === "request") {
-				send(sender, "This feature is coming soon!")
-			} else {
-				send(sender, "Sorry, I don't know how to do that yet :(")
-			}
-			*/
 
 			continue
-		}	
+		}
 	}
 	res.sendStatus(200)
 	
