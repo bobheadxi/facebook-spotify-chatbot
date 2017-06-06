@@ -98,7 +98,7 @@ app.post('/webhook/', function(req, res) {
 			let text = event.message.text
 			console.log("Message received: " + text)
 
-			let messageDataSeries = bot.responseBuilder(text)
+			let messageDataSeries = bot.responseBuilder(sender, text)
 
 			setTimeout(function(){
 				sendMessages(sender, messageDataSeries, 0)
@@ -134,17 +134,13 @@ app.post('/webhook/', function(req, res) {
 			continue
 		}
 
-		if (event.account_linking) {
-			send(sender, "Login success!")
-		}
-
 	}
 	res.sendStatus(200)
 	
 })
 
 // MESSAGE: Choose appropriate response
-bot.responseBuilder = function (text) {
+bot.responseBuilder = function (sender, text) {
 	var keyword = text.toLowerCase()
 	if (text.includes(" ")) {
 		keyword = keyword.substring(0, keyword.indexOf(" "))
@@ -157,7 +153,7 @@ bot.responseBuilder = function (text) {
 		case "search":
 			return searchResponse(text)
 		case "login":
-			return loginResponse()
+			return loginResponse(sender)
 		case "code":
 			return devDataFeedback()			
 		default:
@@ -200,10 +196,10 @@ function aboutResponse() {
 }
 
 // MESSAGE: create login link, do login thing
-function loginResponse() {
+function loginResponse(sender) {
 	var scopes = ['user-read-private', 'user-read-email'],
-   		state = 'xx' // note on 'state': useful for correlating requests and responses 
-		   			 // (https://developer.spotify.com/web-api/authorization-guide/)
+   		state = sender // note on 'state': useful for correlating requests and responses 
+		   			   // (https://developer.spotify.com/web-api/authorization-guide/)
 	var authoriseURL = spotifyApi.createAuthorizeURL(scopes, state)
 	console.log("Login URL created: ", authoriseURL)
 	let series = []
@@ -216,8 +212,9 @@ function loginResponse() {
         		"text":"Click this button to log in!",
        			"buttons":[
           			{
-            			"type":"account_link",
-            			"url":authoriseURL
+            			"type":"web_url",
+            			"url":authoriseURL,
+            			"title":"Log in to Spotify"
           			}
         		]
       		}
@@ -231,7 +228,9 @@ function loginResponse() {
 
 app.get('/callback/', function(req, res) {
 	console.log(req.query.code)
+	console.log(req.query.state)
 	var code = req.query.code
+	var user = req.query.state
 
 	spotifyApi.authorizationCodeGrant(code)
   		.then(function(data) {
@@ -239,13 +238,14 @@ app.get('/callback/', function(req, res) {
     		console.log('The access token is ' + data.body['access_token'])
     		console.log('The refresh token is ' + data.body['refresh_token'])
 
-    		spotifyApi.setAccessToken(data.body['access_token'])
-    		spotifyApi.setRefreshToken(data.body['refresh_token'])
+    		//spotifyApi.setAccessToken(data.body['access_token'])
+    		//spotifyApi.setRefreshToken(data.body['refresh_token'])
   		}, function(err) {
     		console.log('Something went wrong!', err)
   		})
 
-	res.sendStatus(200)
+	send(user, "Authentication complete.")
+	res.send("Authentication complete! Go back to Messenger to continue.")
 })
 
 // MESSAGE: results of search query, in the form of generic template

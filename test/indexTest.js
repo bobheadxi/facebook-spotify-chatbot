@@ -28,19 +28,20 @@ describe("Facebook Messenger Bot", function() {
     messageData.attachment.payload.template_type = "generic"
     messageData.attachment.payload.image_aspect_ratio = "square"
     messageData.attachment.payload.elements = []
+    var sender = "1234"
 
     it("for introResponse() : empty term", function() {
-        assert.deepEqual(bot.responseBuilder(""), responseDefault)
+        assert.deepEqual(bot.responseBuilder(sender, ""), responseDefault)
     });
 
     it("for introResponse() : keyword not first word", function() {
-        assert.deepEqual(bot.responseBuilder("chicken about"), responseDefault)
-        assert.deepEqual(bot.responseBuilder("chicken search"), responseDefault)
+        assert.deepEqual(bot.responseBuilder(sender, "chicken about"), responseDefault)
+        assert.deepEqual(bot.responseBuilder(sender, "chicken search"), responseDefault)
     });
 
     it('for aboutResponse() : "about" is first word of term', function() {
-        assert.deepEqual(bot.responseBuilder("about"), responseAbout)
-        assert.deepEqual(bot.responseBuilder("about me you"), responseAbout)
+        assert.deepEqual(bot.responseBuilder(sender, "about"), responseAbout)
+        assert.deepEqual(bot.responseBuilder(sender, "about me you"), responseAbout)
     });
 
     it('for searchResponse() : "search" is first word of term, no result', function() {
