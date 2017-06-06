@@ -74,5 +74,11 @@ describe("Facebook Messenger Bot", function() {
         assert.deepEqual(bot.responseBuilder("search coldplay"), searchResult)
         */
     });
+
+    it('login', function() {
+        
+        //TODO
+
+    })
   });
 });

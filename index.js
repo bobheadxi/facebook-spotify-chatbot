@@ -44,6 +44,7 @@ app.get('/webhook/', function (req, res) {
 // Start server
 app.listen(app.get('port'), function() {
 	console.log('Server is running on port ', app.get('port'))
+	setGetStarted();
 })
 
 
@@ -88,23 +89,26 @@ app.post('/webhook/', function(req, res) {
 		let event = req.body.entry[0].messaging[i]
 		let sender = event.sender.id
 
-		// handle incoming message events
+		// handle incoming messages
 		if (event.message && event.message.text) {
+			if (event.message.is_echo === true) {
+				continue
+			}
 			typingIndicator(sender, "on")
 			let text = event.message.text
 			console.log("Message received: " + text)
 
 			let messageDataSeries = bot.responseBuilder(text)
 
-			setTimeout(function(){		
+			setTimeout(function(){
 				sendMessages(sender, messageDataSeries, 0)
 			},300)
 		}
 
-		// handle incoming postback events in form of JSON object string of type "preview" or "request"
+		// handle incoming postback events
 		if (event.postback) {
 			var load = JSON.parse(event.postback.payload)
-
+			console.log("Postback received of type: " + JSON.stringify(load.type))
 			switch(load.type) {
 				case "preview":
 					if (load.url.includes("mp3-preview")) {
@@ -113,30 +117,23 @@ app.post('/webhook/', function(req, res) {
 					} else {
 						send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
 					}
+					break
 				case "request":
 					//TODO
 					send(sender, "This feature is coming soon!")
+					break
+				case "getstarted":
+					setTimeout(function(){
+						sendMessages(sender, introResponse(), 0)
+					},300)
+					break
 				default:
 					send(sender, "Sorry, I don't know how to do that yet :(")
+					break
 			}
-
-			/*
-			if (load.type === "preview") {
-				if (load.url.includes("mp3-preview")) {
-					send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
-					send(sender, audioAttachmentResponse(load.url))
-				} else {
-					send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
-				} 
-			} else if (load.type === "request") {
-				send(sender, "This feature is coming soon!")
-			} else {
-				send(sender, "Sorry, I don't know how to do that yet :(")
-			}
-			*/
-
 			continue
-		}	
+		}
+
 	}
 	res.sendStatus(200)
 	
@@ -146,14 +143,17 @@ app.post('/webhook/', function(req, res) {
 bot.responseBuilder = function (text) {
 	var keyword = text.toLowerCase()
 	if (text.includes(" ")) {
-		keyword = text.substring(0, text.indexOf(" "))
+		keyword = keyword.substring(0, keyword.indexOf(" "))
 	}
-
+	console.log("Keyword: ", keyword)
+	
 	switch (keyword) {
 		case "about":
 			return aboutResponse()
 		case "search":
 			return searchResponse(text)
+		case "login":
+			return loginResponse()
 		default:
 			return introResponse()
 	}
@@ -178,6 +178,59 @@ function aboutResponse() {
 	series.push("My current Spotify client access token expires on: " + expiry)
 	return series
 }
+
+// MESSAGE: create login link, do login thing
+function loginResponse() {
+	var scopes = ['user-read-private', 'user-read-email'],
+   		state = 'xx' // note on 'state': useful for correlating requests and responses 
+		   			 // (https://developer.spotify.com/web-api/authorization-guide/)
+	var authoriseURL = spotifyApi.createAuthorizeURL(scopes, state)
+	console.log("Login URL created: ", authoriseURL)
+	let series = []
+	
+	let buttonTemplate = {
+    	"attachment":{
+    		"type":"template",
+      		"payload":{
+        		"template_type":"button",
+        		"text":"Click this button to log in!",
+       			"buttons":[
+          			{
+            			"type":"web_url",
+            			"url":authoriseURL,
+            			"title":"Log in to Spotify"
+          			}
+        		]
+      		}
+      	}
+	}
+	series.push(buttonTemplate)
+	
+	/*
+	request({
+		url: authorizeURL,
+		method: 'GET'
+	}, function(error, response, body) {
+		if (error) {
+			console.log("Login failed")
+			series.push("Login failed.")
+		} else {
+			console.log(JSON.stringify(response))
+			console.log("AUTHENTICATION SUCCESS", response.body.code)
+			series.push("Login success!")
+			spotifyApi.setAccessToken(response.body.code)
+		}
+		
+	})
+	*/
+
+	series.push("plz log in")
+	return series
+}
+
+app.get('/callback/', function(req, res) {
+	console.log(req.query.code)
+})
 
 // MESSAGE: results of search query, in the form of generic template
 function searchResponse(text) {
@@ -280,7 +333,7 @@ function sendMessages(sender, series, i) {
 				}
 				sendMessages(sender, series, i+1)
 			})
-		},2000)
+		},300)
 	} else {
 		return
 	}
@@ -324,11 +377,33 @@ function typingIndicator(sender, status) {
 	}, function(error, response, body) {
 		if (error) {
 			console.error("Error at method typingIndicator(): ", error)
+			console.error("For sender id: ", sender)
 		} else if (response.body.error) {
 			console.error("Error at method typingIndicator(): ", response.body.error)
+			console.error("For sender id: ", sender)
 		}
 	})
 }
 
+function setGetStarted() {
+	request({
+		url: 'https://graph.facebook.com/v2.6/me/messenger_profile',
+		qs: {access_token:fbToken},
+		method: 'POST',
+		json: {
+			get_started:{
+				payload:'{"type": "getstarted"}'
+			}
+		}
+	}, function(error, response, body) {
+		if (error) {
+			console.error("Error at method setGetStarted(): ", error)
+		} else if (response.body.error) {
+			console.error("Error at method setGetStarted(): ", response.body.error)
+		} else {
+			console.log("Setting 'Get Started': ", response.body.result)
+		}
+	})
+}
 
 module.exports = bot
