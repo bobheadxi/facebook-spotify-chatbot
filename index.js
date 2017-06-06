@@ -134,6 +134,10 @@ app.post('/webhook/', function(req, res) {
 			continue
 		}
 
+		if (event.account_linking) {
+			send(sender, "Login success!")
+		}
+
 	}
 	res.sendStatus(200)
 	
@@ -212,9 +216,8 @@ function loginResponse() {
         		"text":"Click this button to log in!",
        			"buttons":[
           			{
-            			"type":"web_url",
-            			"url":authoriseURL,
-            			"title":"Log in to Spotify"
+            			"type":"account_link",
+            			"url":authoriseURL
           			}
         		]
       		}
