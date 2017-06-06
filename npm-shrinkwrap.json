@@ -59,6 +59,11 @@
       "from": "ansicolors@>=0.2.1 <0.3.0",
       "resolved": "https://registry.npmjs.org/ansicolors/-/ansicolors-0.2.1.tgz"
     },
+    "ap": {
+      "version": "0.2.0",
+      "from": "ap@>=0.2.0 <0.3.0",
+      "resolved": "https://registry.npmjs.org/ap/-/ap-0.2.0.tgz"
+    },
     "api-check": {
       "version": "7.5.5",
       "from": "api-check@>=7.5.5 <8.0.0",
@@ -207,6 +212,11 @@
       "from": "buffer-shims@>=1.0.0 <1.1.0",
       "resolved": "https://registry.npmjs.org/buffer-shims/-/buffer-shims-1.0.0.tgz"
     },
+    "buffer-writer": {
+      "version": "1.0.1",
+      "from": "buffer-writer@1.0.1",
+      "resolved": "https://registry.npmjs.org/buffer-writer/-/buffer-writer-1.0.1.tgz"
+    },
     "builtin-modules": {
       "version": "1.1.1",
       "from": "builtin-modules@>=1.1.1 <2.0.0",
@@ -247,7 +257,7 @@
     },
     "chai": {
       "version": "3.5.0",
-      "from": "chai@latest",
+      "from": "https://registry.npmjs.org/chai/-/chai-3.5.0.tgz",
       "resolved": "https://registry.npmjs.org/chai/-/chai-3.5.0.tgz"
     },
     "chalk": {
@@ -864,6 +874,11 @@
       "from": "generate-object-property@>=1.1.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/generate-object-property/-/generate-object-property-1.2.0.tgz",
       "dev": true
+    },
+    "generic-pool": {
+      "version": "2.4.3",
+      "from": "generic-pool@2.4.3",
+      "resolved": "https://registry.npmjs.org/generic-pool/-/generic-pool-2.4.3.tgz"
     },
     "get-stdin": {
       "version": "4.0.1",
@@ -1580,6 +1595,11 @@
       "resolved": "https://registry.npmjs.org/p-locate/-/p-locate-2.0.0.tgz",
       "dev": true
     },
+    "packet-reader": {
+      "version": "0.3.1",
+      "from": "packet-reader@0.3.1",
+      "resolved": "https://registry.npmjs.org/packet-reader/-/packet-reader-0.3.1.tgz"
+    },
     "parse-json": {
       "version": "2.2.0",
       "from": "parse-json@>=2.2.0 <3.0.0",
@@ -1623,6 +1643,45 @@
       "version": "0.2.0",
       "from": "performance-now@>=0.2.0 <0.3.0",
       "resolved": "https://registry.npmjs.org/performance-now/-/performance-now-0.2.0.tgz"
+    },
+    "pg": {
+      "version": "6.2.3",
+      "from": "pg@latest",
+      "resolved": "https://registry.npmjs.org/pg/-/pg-6.2.3.tgz",
+      "dependencies": {
+        "semver": {
+          "version": "4.3.2",
+          "from": "semver@4.3.2",
+          "resolved": "https://registry.npmjs.org/semver/-/semver-4.3.2.tgz"
+        }
+      }
+    },
+    "pg-connection-string": {
+      "version": "0.1.3",
+      "from": "pg-connection-string@0.1.3",
+      "resolved": "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-0.1.3.tgz"
+    },
+    "pg-pool": {
+      "version": "1.7.1",
+      "from": "pg-pool@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/pg-pool/-/pg-pool-1.7.1.tgz",
+      "dependencies": {
+        "object-assign": {
+          "version": "4.1.0",
+          "from": "object-assign@4.1.0",
+          "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.0.tgz"
+        }
+      }
+    },
+    "pg-types": {
+      "version": "1.12.0",
+      "from": "pg-types@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/pg-types/-/pg-types-1.12.0.tgz"
+    },
+    "pgpass": {
+      "version": "1.0.2",
+      "from": "pgpass@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/pgpass/-/pgpass-1.0.2.tgz"
     },
     "pify": {
       "version": "2.3.0",
@@ -1679,6 +1738,26 @@
       "from": "pluralize@>=1.2.1 <2.0.0",
       "resolved": "https://registry.npmjs.org/pluralize/-/pluralize-1.2.1.tgz",
       "dev": true
+    },
+    "postgres-array": {
+      "version": "1.0.2",
+      "from": "postgres-array@>=1.0.0 <1.1.0",
+      "resolved": "https://registry.npmjs.org/postgres-array/-/postgres-array-1.0.2.tgz"
+    },
+    "postgres-bytea": {
+      "version": "1.0.0",
+      "from": "postgres-bytea@>=1.0.0 <1.1.0",
+      "resolved": "https://registry.npmjs.org/postgres-bytea/-/postgres-bytea-1.0.0.tgz"
+    },
+    "postgres-date": {
+      "version": "1.0.3",
+      "from": "postgres-date@>=1.0.0 <1.1.0",
+      "resolved": "https://registry.npmjs.org/postgres-date/-/postgres-date-1.0.3.tgz"
+    },
+    "postgres-interval": {
+      "version": "1.1.0",
+      "from": "postgres-interval@>=1.1.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/postgres-interval/-/postgres-interval-1.1.0.tgz"
     },
     "prelude-ls": {
       "version": "1.1.2",
@@ -1876,6 +1955,11 @@
       "from": "sntp@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/sntp/-/sntp-1.0.9.tgz"
     },
+    "split": {
+      "version": "1.0.0",
+      "from": "split@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/split/-/split-1.0.0.tgz"
+    },
     "spotify-web-api-node": {
       "version": "2.4.0",
       "from": "spotify-web-api-node@latest",
@@ -2015,8 +2099,7 @@
     "through": {
       "version": "2.3.8",
       "from": "through@>=2.3.6 <3.0.0",
-      "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
     },
     "timed-out": {
       "version": "4.0.1",
@@ -2159,8 +2242,7 @@
     "xtend": {
       "version": "4.0.1",
       "from": "xtend@>=4.0.0 <5.0.0",
-      "resolved": "https://registry.npmjs.org/xtend/-/xtend-4.0.1.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/xtend/-/xtend-4.0.1.tgz"
     }
   }
 }

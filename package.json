@@ -14,6 +14,7 @@
     "express": "^4.15.3",
     "heroku-cli-util": "^6.1.17",
     "mocha": "^3.4.2",
+    "pg": "6.2.3",
     "request": "^2.81.0",
     "spotify-web-api-node": "^2.4.0"
   },

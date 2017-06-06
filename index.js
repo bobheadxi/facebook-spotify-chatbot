@@ -5,6 +5,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
+var pg = require('pg')
 var last_updated = new Date()
 
 // App Secrets
@@ -47,7 +48,6 @@ app.listen(app.get('port'), function() {
 	setGetStarted();
 })
 
-
 // ------------------------------------------------------------------
 // -------------------------- Spotify API ---------------------------
 // ------------------------------------------------------------------
@@ -77,6 +77,24 @@ var expiry = new Date()
 expiry.setSeconds(expiry.getSeconds() + 3600)
 
 // ------------------------------------------------------------------
+// ------------------------- Database (PG) --------------------------
+// ------------------------------------------------------------------
+// Source: https://devcenter.heroku.com/articles/heroku-postgresql 
+
+pg.defaults.ssl = true
+pg.connect(process.env.DATABASE_URL, function(err, client) {
+  if (err) throw err
+  console.log('Connected to postgres! Getting schemas...')
+
+  client
+    .query('SELECT table_schema,table_name FROM information_schema.tables;')
+    .on('row', function(row) {
+      console.log(JSON.stringify(row))
+    });
+});
+
+
+// ------------------------------------------------------------------
 // --------------------------- Functions ----------------------------
 // ------------------------------------------------------------------
 
@@ -88,7 +106,7 @@ app.post('/webhook/', function(req, res) {
 	for (let i = 0; i < messaging_events.length; i++) {
 		let event = req.body.entry[0].messaging[i]
 		let sender = event.sender.id
-
+		
 		// handle incoming messages
 		if (event.message && event.message.text) {
 			if (event.message.is_echo === true) {
@@ -96,7 +114,7 @@ app.post('/webhook/', function(req, res) {
 			}
 			typingIndicator(sender, "on")
 			let text = event.message.text
-			console.log("Message received: " + text)
+			console.log("Message received: '" + text + "' from " + sender)
 
 			let messageDataSeries = bot.responseBuilder(sender, text)
 
@@ -111,6 +129,7 @@ app.post('/webhook/', function(req, res) {
 			console.log("Postback received of type: " + JSON.stringify(load.type))
 			switch(load.type) {
 				case "preview":
+					console.log("Postback for preview received from " + sender)
 					if (load.url.includes("mp3-preview")) {
 						send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
 						send(sender, audioAttachmentResponse(load.url))
@@ -119,15 +138,24 @@ app.post('/webhook/', function(req, res) {
 					}
 					break
 				case "request":
+					console.log("Postback for request received from " + sender)
 					//TODO
 					send(sender, "This feature is coming soon!")
+
+					var songId = load.id
+					var songName = load.name
+					var artist = load.artist
+					
+					
 					break
 				case "getstarted":
+					console.log("Postback for getstarted received from " + sender)
 					setTimeout(function(){
 						sendMessages(sender, introResponse(), 0)
 					},300)
 					break
 				default:
+					console.error("Postback for undefined received from " + sender)
 					send(sender, "Sorry, I don't know how to do that yet :(")
 					break
 			}
@@ -227,16 +255,16 @@ function loginResponse(sender) {
 }
 
 app.get('/callback/', function(req, res) {
-	console.log(req.query.code)
-	console.log(req.query.state)
 	var code = req.query.code
-	var user = req.query.state
+	var sender_id = req.query.state
 
 	spotifyApi.authorizationCodeGrant(code)
   		.then(function(data) {
-   			console.log('The token expires in ' + data.body['expires_in'])
-    		console.log('The access token is ' + data.body['access_token'])
-    		console.log('The refresh token is ' + data.body['refresh_token'])
+			var token_expiry = data.body['expires_in']
+			var access_token = data.body['access_token']
+			var refresh_token = data.body['refresh_token']
+			
+			// TODO: Save in database
 
     		//spotifyApi.setAccessToken(data.body['access_token'])
     		//spotifyApi.setRefreshToken(data.body['refresh_token'])
@@ -244,7 +272,7 @@ app.get('/callback/', function(req, res) {
     		console.log('Something went wrong!', err)
   		})
 
-	send(user, "Authentication complete.")
+	send(sender_id, "Authentication complete.")
 	res.send("Authentication complete! Go back to Messenger to continue.")
 })
 
