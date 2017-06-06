@@ -154,9 +154,25 @@ bot.responseBuilder = function (text) {
 			return searchResponse(text)
 		case "login":
 			return loginResponse()
+		case "code":
+			return devDataFeedback()			
 		default:
 			return introResponse()
 	}
+}
+
+// for research
+function devDataFeedback() {
+	let series = []
+	spotifyApi.getMe()
+  		.then(function(data) {
+   			console.log('Some information about the authenticated user', data.body)
+			series.push(JSON.stringify(data.body))
+ 		}, function(err) {
+    		console.log('Something went wrong!', err)
+			series.push(JSON.stringify(err))
+  		})
+	return series
 }
 
 // MESSAGE: introduction message
@@ -205,24 +221,6 @@ function loginResponse() {
       	}
 	}
 	series.push(buttonTemplate)
-	
-	/*
-	request({
-		url: authorizeURL,
-		method: 'GET'
-	}, function(error, response, body) {
-		if (error) {
-			console.log("Login failed")
-			series.push("Login failed.")
-		} else {
-			console.log(JSON.stringify(response))
-			console.log("AUTHENTICATION SUCCESS", response.body.code)
-			series.push("Login success!")
-			spotifyApi.setAccessToken(response.body.code)
-		}
-		
-	})
-	*/
 
 	series.push("plz log in")
 	return series
@@ -230,6 +228,21 @@ function loginResponse() {
 
 app.get('/callback/', function(req, res) {
 	console.log(req.query.code)
+	var code = req.query.code
+
+	spotifyApi.authorizationCodeGrant(code)
+  		.then(function(data) {
+   			console.log('The token expires in ' + data.body['expires_in'])
+    		console.log('The access token is ' + data.body['access_token'])
+    		console.log('The refresh token is ' + data.body['refresh_token'])
+
+    		spotifyApi.setAccessToken(data.body['access_token'])
+    		spotifyApi.setRefreshToken(data.body['refresh_token'])
+  		}, function(err) {
+    		console.log('Something went wrong!', err)
+  		})
+
+	res.sendStatus(200)
 })
 
 // MESSAGE: results of search query, in the form of generic template

@@ -75,7 +75,7 @@ describe("Facebook Messenger Bot", function() {
         */
     });
 
-    it('login', function() {
+    it('login stuff', function() {
         
         //TODO
 
