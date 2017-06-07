@@ -45,6 +45,9 @@ describe("Facebook Messenger Bot", function() {
     });
 
     it('for searchResponse() : "search" is first word of term, no result', function() {
+
+        //TODO
+
         /*
         let searchResult = ["I couldn't find anything, sorry :("]
         assert.deepEqual(bot.responseBuilder("search asdkfjalweijfag"), searchResult)

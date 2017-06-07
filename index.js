@@ -8,17 +8,11 @@ const app = express()
 var pg = require('pg')
 var last_updated = new Date()
 
-// App Secrets
-const fbToken = process.env.FB_TOKEN
-const spotifyClientId = process.env.SPOTIFY_CLIENT_ID
-const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET
-const spotifyRedirectUri = process.env.SPOTIFY_REDIRECT_URI
-
 // ------------------------------------------------------------------
 // --------------------- Facebook Messenger API ---------------------
 // ------------------------------------------------------------------
 // Source: https://github.com/jw84/messenger-bot-tutorial, Copyright (c) 2016 Jerry Wang, MIT License
-
+const fbToken = process.env.FB_TOKEN
 const fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
 
 app.set("port", (process.env.PORT || 3000))
@@ -54,7 +48,11 @@ app.listen(app.get('port'), function() {
 // Source: https://github.com/thelinmichael/spotify-web-api-node, Copyright (c) 2014 Michael Thelin, MIT License
 
 var SpotifyWebApi = require("spotify-web-api-node")
+const spotifyClientId = process.env.SPOTIFY_CLIENT_ID
+const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET
+const spotifyRedirectUri = process.env.SPOTIFY_REDIRECT_URI
 var redirectUri = spotifyRedirectUri
+var spotifyClientAccessToken
 
 // Initiate Spotify stuff
 var spotifyApi = new SpotifyWebApi({
@@ -67,7 +65,9 @@ spotifyApi.clientCredentialsGrant()
   .then(function(data) {
   	console.log("Spotify access token request success!")
 
-    spotifyApi.setAccessToken(data.body['access_token'])
+    
+	spotifyClientAccessToken = data.body['access_token']
+	spotifyApi.setAccessToken(spotifyClientAccessToken)
     
   	}, function(err) {
         console.error("Spotify access token request error: " + err)
@@ -98,7 +98,10 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
 // --------------------------- Functions ----------------------------
 // ------------------------------------------------------------------
 
-// Incoming Facebook data handling
+// array of sender_id that the bot is waiting for a passphrase from
+var songRequests = new Map()
+
+// RESPOND to incoming facebook stuff
 app.post('/webhook/', function(req, res) {
 	let messaging_events = req.body.entry[0].messaging
 	
@@ -112,8 +115,26 @@ app.post('/webhook/', function(req, res) {
 			if (event.message.is_echo === true) {
 				continue
 			}
+
 			typingIndicator(sender, "on")
 			let text = event.message.text
+
+			// waiting for passphrase from this user?
+			let songReq = songRequests.get(sender)
+			if (songReq) {
+				if (text.toLowerCase() === 'cancel') {
+					songRequests.delete(sender)
+					send(sender, "Your song request has been cancelled.")
+					continue
+				}
+
+				//do thing
+				// map value has songId, songName, artist
+				send(sender, "Your song request has been approved!")
+				songRequests.delete(sender)
+				continue
+			}
+			
 			console.log("Message received: '" + text + "' from " + sender)
 
 			let messageDataSeries = bot.responseBuilder(sender, text)
@@ -140,13 +161,14 @@ app.post('/webhook/', function(req, res) {
 				case "request":
 					console.log("Postback for request received from " + sender)
 					//TODO
-					send(sender, "This feature is coming soon!")
+					
+					if (songRequests.has(sender)) {
+						send(sender, "Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.")
+						continue
+					}
+					songRequests.set(sender, {songId:load.id, songName:load.name, artist:load.artist})
+					send(sender, "Please send the passcode for your host's playlist.")
 
-					var songId = load.id
-					var songName = load.name
-					var artist = load.artist
-					
-					
 					break
 				case "getstarted":
 					console.log("Postback for getstarted received from " + sender)
@@ -167,6 +189,51 @@ app.post('/webhook/', function(req, res) {
 	
 })
 
+// RESPOND to Spotify User Login, get Auth codes
+app.get('/callback/', function(req, res) {
+	var code = req.query.code
+	var fb_id = req.query.state
+	var passcode = fb_id.substring(4,8)
+
+	spotifyApi.authorizationCodeGrant(code)
+  		.then(function(data) {
+			var token_expiry = data.body['expires_in']
+			var access_token = data.body['access_token']
+			var refresh_token = data.body['refresh_token']
+
+    		spotifyApi.setAccessToken(access_token)
+    		//spotifyApi.setRefreshToken(data.body['refresh_token'])
+
+			spotifyApi.getMe().then(function(data) {
+   				
+				var spotify_id = data.body.id
+				console.log('User data request success! Id is ' + spotify_id)
+					
+				// TODO: Save in database 
+				// (passcode, fb_id, spotify_id, playlist_id, access_token, refresh_token, [TODO: token_expiry])
+				spotifyApi.createPlaylist(spotify_id, passcode, { 'public' : false })
+  					.then(function(data) {
+						var playlist_id = data.body.id
+    					console.log('Created playlist, id is ' + playlist_id);
+						let confirm = "Authentication complete: your playlist passcode and name is " 
+										+ passcode + ". Tell your friends!"
+						send(fb_id, confirm)
+
+						spotifyApi.setAccessToken(spotifyClientAccessToken)
+  					}, function(err) {
+    					console.log('Something went wrong!', err);
+						send(fb_id, "Something went wrong with authentication and playlist creation :(")
+ 					})
+ 				}, function(err) {
+    				console.log('Something went wrong!', err)
+  				})
+  		}, function(err) {
+    		console.log('Something went wrong!', err)
+  		})
+	
+	res.send("Authentication complete! Go back to Messenger to continue.")
+})
+
 // MESSAGE: Choose appropriate response
 bot.responseBuilder = function (sender, text) {
 	var keyword = text.toLowerCase()
@@ -176,6 +243,8 @@ bot.responseBuilder = function (sender, text) {
 	console.log("Keyword: ", keyword)
 	
 	switch (keyword) {
+		case "help":
+			return introResponse()
 		case "about":
 			return aboutResponse()
 		case "search":
@@ -183,9 +252,10 @@ bot.responseBuilder = function (sender, text) {
 		case "login":
 			return loginResponse(sender)
 		case "code":
+			//remove later
 			return devDataFeedback()			
 		default:
-			return introResponse()
+			return ["I am not sure how to respond to that. Type 'Help' to get tips!"]
 	}
 }
 
@@ -225,7 +295,7 @@ function aboutResponse() {
 
 // MESSAGE: create login link, do login thing
 function loginResponse(sender) {
-	var scopes = ['user-read-private', 'user-read-email'],
+	var scopes = ['user-read-private', 'playlist-read-collaborative', 'playlist-modify-private', 'playlist-modify-public'],
    		state = sender // note on 'state': useful for correlating requests and responses 
 		   			   // (https://developer.spotify.com/web-api/authorization-guide/)
 	var authoriseURL = spotifyApi.createAuthorizeURL(scopes, state)
@@ -253,28 +323,6 @@ function loginResponse(sender) {
 	series.push("plz log in")
 	return series
 }
-
-app.get('/callback/', function(req, res) {
-	var code = req.query.code
-	var sender_id = req.query.state
-
-	spotifyApi.authorizationCodeGrant(code)
-  		.then(function(data) {
-			var token_expiry = data.body['expires_in']
-			var access_token = data.body['access_token']
-			var refresh_token = data.body['refresh_token']
-			
-			// TODO: Save in database
-
-    		//spotifyApi.setAccessToken(data.body['access_token'])
-    		//spotifyApi.setRefreshToken(data.body['refresh_token'])
-  		}, function(err) {
-    		console.log('Something went wrong!', err)
-  		})
-
-	send(sender_id, "Authentication complete.")
-	res.send("Authentication complete! Go back to Messenger to continue.")
-})
 
 // MESSAGE: results of search query, in the form of generic template
 function searchResponse(text) {
@@ -429,6 +477,7 @@ function typingIndicator(sender, status) {
 	})
 }
 
+// Sets a greeting page for new users
 function setGetStarted() {
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messenger_profile',
