@@ -236,7 +236,6 @@ app.post('/webhook/', function(req, res) {
 						send(load.sender, "There was a problem approving the song.")
 						spotifyApi.setAccessToken(spotifyClientAccessToken)
   					})
-					
 					break
 				// Handle get started button
 				case "getstarted":
@@ -252,7 +251,6 @@ app.post('/webhook/', function(req, res) {
 			}
 			continue
 		}
-
 	}
 	res.sendStatus(200)
 	
