@@ -164,7 +164,7 @@ app.post('/webhook/', function(req, res) {
       					}
 					}
 					send(host.fbId, buttonTemplate)
-
+					songRequests.delete(sender)
 					send(sender, "Your song request has been delivered.")
 				} else {
 					send(sender, "That is not a valid host code - ask your host again to make sure, or send 'cancel' to cancel your request.")
@@ -290,7 +290,7 @@ app.get('/callback/', function(req, res) {
 				spotifyApi.setAccessToken(spotifyClientAccessToken)
 
 				// TODO: Save in database instead
-				hostList.set(passcode, {
+				hostList.set(String(passcode), {
 					fbId:fb_id,
 					spotifyId:spotify_id,
 					playlistId:playlist_id,
