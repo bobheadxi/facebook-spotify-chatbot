@@ -81,6 +81,8 @@ expiry.setSeconds(expiry.getSeconds() + 3600)
 // ------------------------------------------------------------------
 // Source: https://devcenter.heroku.com/articles/heroku-postgresql 
 
+// TODO: user for song requests? something else??? what do
+
 pg.defaults.ssl = true
 pg.connect(process.env.DATABASE_URL, function(err, client) {
   if (err) throw err
@@ -98,8 +100,12 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
 // --------------------------- Functions ----------------------------
 // ------------------------------------------------------------------
 
-// array of sender_id that the bot is waiting for a passphrase from
-var songRequests = new Map()
+// TODO: replace with database tables
+var songRequests = new Map() //array of sender_id that the bot is waiting for a passphrase from
+							 // key: sender, val: {songId, songName, artist, preview}
+var hostList = new Map() //array of hosts and their associated passcodes and stuff
+						 // key: passcode, val: {fbId, spotifyId, playlistId, accessToken, refreshToken}
+
 
 // RESPOND to incoming facebook stuff
 app.post('/webhook/', function(req, res) {
@@ -128,9 +134,41 @@ app.post('/webhook/', function(req, res) {
 					continue
 				}
 
-				//do thing
-				// map value has songId, songName, artist
-				send(sender, "Your song request has been approved!")
+				let host = hostList.get(text)
+				if (host) {
+					songReq.passcode = text
+					songReq.sender = sender
+					songReq.type = "requestapprove"
+					let buttonTemplate = {
+    					"attachment":{
+    						"type":"template",
+      						"payload":{
+        						"template_type":"button",
+        						"text":"A user has requested the song " + songReq.songName 
+										+ " by " + songReq.artist,
+       							"buttons":[
+									{
+									"type": "postback",
+									"title": "Preview",
+									"payload": '{"type": "preview","url": "' + songReq.url
+										+ '","name": "' + songReq.songName
+										+ '","artist": "' + songReq.artist + '"}'
+									},
+          							{
+            						"type": "postback",
+									"title": "Approve Song",
+            						"payload": JSON.stringify(songReq)
+          							}
+        						]
+      						}
+      					}
+					}
+					send(host.fbId, buttonTemplate)
+
+					send(sender, "Your song request has been delivered.")
+				}
+
+				send(sender, "Your song request has been delivered.")
 				songRequests.delete(sender)
 				continue
 			}
@@ -149,6 +187,7 @@ app.post('/webhook/', function(req, res) {
 			var load = JSON.parse(event.postback.payload)
 			console.log("Postback received of type: " + JSON.stringify(load.type))
 			switch(load.type) {
+				// Handle request for song preview
 				case "preview":
 					console.log("Postback for preview received from " + sender)
 					if (load.url.includes("mp3-preview")) {
@@ -158,18 +197,49 @@ app.post('/webhook/', function(req, res) {
 						send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
 					}
 					break
+				// Handle a song request
 				case "request":
 					console.log("Postback for request received from " + sender)
-					//TODO
 					
+					//TODO: save in database instead
 					if (songRequests.has(sender)) {
 						send(sender, "Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.")
 						continue
 					}
-					songRequests.set(sender, {songId:load.id, songName:load.name, artist:load.artist})
+					songRequests.set(sender, {songId:load.id, songName:load.name, artist:load.artist, preview:load.url})
 					send(sender, "Please send the passcode for your host's playlist.")
 
 					break
+				// Handle song request approval
+				case "requestapprove":
+					console.log("Postback for requestconfirm received from " + sender)
+					let host = hostList.get(load.passcode)
+					// host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
+					// load is {passcode, sender, songId, songName, artist, preview}
+
+					// set auth to user, refresh token, add to playlist, set auth back to client
+					spotifyApi.setAccessToken(host.accessToken)
+    				spotifyApi.setRefreshToken(host.refreshToken)
+					spotifyApi.refreshAccessToken()
+  					.then(function(data) {
+    					console.log('The access token has been refreshed!');
+    					spotifyApi.setAccessToken(data.body['access_token']);
+
+						spotifyApi.addTracksToPlaylist(host.spotifyId, host.playlistId, ["spotify:track:" + load.songId])
+						.then(function(data) {
+							send(sender, load.songName + " has been added to your playlist.")
+							send(load.sender, "Your song request for " + load.songName + " has been approved!")
+							spotifyApi.setAccessToken(spotifyClientAccessToken)
+						})
+  					}).catch(function(err) {
+   						console.error('Problem confirm request: ', err);
+						send(sender, "There was a problem approving the song.")
+						send(load.sender, "There was a problem approving the song.")
+						spotifyApi.setAccessToken(spotifyClientAccessToken)
+  					})
+					
+					break
+				// Handle get started button
 				case "getstarted":
 					console.log("Postback for getstarted received from " + sender)
 					setTimeout(function(){
@@ -195,41 +265,46 @@ app.get('/callback/', function(req, res) {
 	var fb_id = req.query.state
 	var passcode = fb_id.substring(4,8)
 
+	// Request auth codes, get user info, create playlist, save everything, set auth back to client
 	spotifyApi.authorizationCodeGrant(code)
-  		.then(function(data) {
-			var token_expiry = data.body['expires_in']
-			var access_token = data.body['access_token']
-			var refresh_token = data.body['refresh_token']
+  	.then(function(data) {
+		var token_expiry = data.body['expires_in']
+		var access_token = data.body['access_token']
+		var refresh_token = data.body['refresh_token']
+    	spotifyApi.setAccessToken(access_token)
 
-    		spotifyApi.setAccessToken(access_token)
-    		//spotifyApi.setRefreshToken(data.body['refresh_token'])
+		spotifyApi.getMe()
+		.then(function(data) {
+			var spotify_id = data.body.id
+			console.log('User data request success! Id is ' + spotify_id)		
 
-			spotifyApi.getMe().then(function(data) {
-   				
-				var spotify_id = data.body.id
-				console.log('User data request success! Id is ' + spotify_id)
-					
-				// TODO: Save in database 
-				// (passcode, fb_id, spotify_id, playlist_id, access_token, refresh_token, [TODO: token_expiry])
-				spotifyApi.createPlaylist(spotify_id, passcode, { 'public' : false })
-  					.then(function(data) {
-						var playlist_id = data.body.id
-    					console.log('Created playlist, id is ' + playlist_id);
-						let confirm = "Authentication complete: your playlist passcode and name is " 
-										+ passcode + ". Tell your friends!"
-						send(fb_id, confirm)
+			// TODO: check if playlist already exists
+			// (passcode, fb_id, spotify_id, playlist_id, access_token, refresh_token, [TODO: token_expiry])
+			spotifyApi.createPlaylist(spotify_id, passcode, { 'public' : false })
+			.then(function(data) {
+				var playlist_id = data.body.id
+				console.log('Created playlist, id is ' + playlist_id);
+				let confirm = "Authentication complete: your playlist passcode and name is " 
+									+ passcode + ". Tell your friends!"
+				send(fb_id, confirm)
 
-						spotifyApi.setAccessToken(spotifyClientAccessToken)
-  					}, function(err) {
-    					console.log('Something went wrong!', err);
-						send(fb_id, "Something went wrong with authentication and playlist creation :(")
- 					})
- 				}, function(err) {
-    				console.log('Something went wrong!', err)
-  				})
-  		}, function(err) {
-    		console.log('Something went wrong!', err)
-  		})
+				spotifyApi.setAccessToken(spotifyClientAccessToken)
+
+				// TODO: Save in database instead
+				hostList.set(passcode, {
+					fbId:fb_id,
+					spotifyId:spotify_id,
+					playlistId:playlist_id,
+					accessToken:access_token,
+					refreshToken:refresh_token
+				})
+  			})
+ 		})
+  	}).catch(function(err) {
+    	console.error('Something went wrong with Spotify authentication: ', err)
+		send(fb_id, "There was a problem connecting to your Spotify account :(")
+		spotifyApi.setAccessToken(spotifyClientAccessToken)
+  	})
 	
 	res.send("Authentication complete! Go back to Messenger to continue.")
 })
@@ -249,17 +324,18 @@ bot.responseBuilder = function (sender, text) {
 			return aboutResponse()
 		case "search":
 			return searchResponse(text)
-		case "login":
+		case "host":
 			return loginResponse(sender)
+		/* Disable for releases
 		case "code":
-			//remove later
-			return devDataFeedback()			
+			return devDataFeedback()
+		*/		
 		default:
 			return ["I am not sure how to respond to that. Type 'Help' to get tips!"]
 	}
 }
 
-// for research
+// for research, add to "keyword" for dev
 function devDataFeedback() {
 	let series = []
 	spotifyApi.getMe()
@@ -276,8 +352,9 @@ function devDataFeedback() {
 // MESSAGE: introduction message
 function introResponse() {
 	let series = []
-	series.push("Hello! I am a Spotify chatbot.")
+	series.push("Hello! I am a Spotify chatbot")
 	series.push("Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.")
+	series.push("Type 'Host' to host your own crowdsourced playlist!")
 	series.push("Type 'About' to learn more about me.")
 	return series
 }
@@ -289,7 +366,7 @@ function aboutResponse() {
 	series.push("I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.")
 	series.push("If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.")
 	series.push("I was last updated on: " + last_updated)
-	series.push("My current Spotify client access token expires on: " + expiry)
+	series.push("For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases")
 	return series
 }
 
@@ -307,20 +384,19 @@ function loginResponse(sender) {
     		"type":"template",
       		"payload":{
         		"template_type":"button",
-        		"text":"Click this button to log in!",
+        		"text":"Click this button to log in and create a new playlist!",
        			"buttons":[
           			{
             			"type":"web_url",
-            			"url":authoriseURL,
-            			"title":"Log in to Spotify"
+						"title":"Log in to Spotify",
+            			"url":authoriseURL
+            			
           			}
         		]
       		}
       	}
 	}
 	series.push(buttonTemplate)
-
-	series.push("plz log in")
 	return series
 }
 
@@ -371,7 +447,8 @@ function searchResponse(text) {
 						"title": "Request",
 						"payload": '{"type": "request","id": "' + item.id
 								+ '","name": "' + item.name 
-								+ '","artist": "' + item.artists[0].name + '"}'
+								+ '","artist": "' + item.artists[0].name 
+								+ '","url": "' + item.preview_url + '"}'
 					}]
 				messageData.attachment.payload.elements.push(element)
     		}

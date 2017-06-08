@@ -84,5 +84,9 @@ describe("Facebook Messenger Bot", function() {
         //TODO
 
     })
+
+    // TODO: Test postbacks
+
+
   });
 });
