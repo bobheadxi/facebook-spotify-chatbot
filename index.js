@@ -150,7 +150,7 @@ app.post('/webhook/', function(req, res) {
 									{
 									"type": "postback",
 									"title": "Preview",
-									"payload": '{"type": "preview","url": "' + songReq.url
+									"payload": '{"type": "preview","url": "' + songReq.preview
 										+ '","name": "' + songReq.songName
 										+ '","artist": "' + songReq.artist + '"}'
 									},
@@ -166,10 +166,9 @@ app.post('/webhook/', function(req, res) {
 					send(host.fbId, buttonTemplate)
 
 					send(sender, "Your song request has been delivered.")
+				} else {
+					send(sender, "That is not a valid host code - ask your host again to make sure, or send 'cancel' to cancel your request.")
 				}
-
-				send(sender, "Your song request has been delivered.")
-				songRequests.delete(sender)
 				continue
 			}
 			
