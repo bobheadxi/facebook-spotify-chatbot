@@ -236,7 +236,6 @@ app.post('/webhook/', function(req, res) {
 						send(load.sender, "There was a problem approving the song.")
 						spotifyApi.setAccessToken(spotifyClientAccessToken)
   					})
-					
 					break
 				// Handle get started button
 				case "getstarted":
@@ -244,7 +243,6 @@ app.post('/webhook/', function(req, res) {
 					setTimeout(function(){
 						sendMessages(sender, introResponse(), 0)
 					},300)
-					break
 				default:
 					console.error("Postback for undefined received from " + sender)
 					send(sender, "Sorry, I don't know how to do that yet :(")
@@ -252,7 +250,6 @@ app.post('/webhook/', function(req, res) {
 			}
 			continue
 		}
-
 	}
 	res.sendStatus(200)
 	
