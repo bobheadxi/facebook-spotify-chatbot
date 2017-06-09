@@ -83,6 +83,7 @@ expiry.setSeconds(expiry.getSeconds() + 3600)
 
 // TODO: user for song requests? something else??? what do
 
+/*
 pg.defaults.ssl = true
 pg.connect(process.env.DATABASE_URL, function(err, client) {
   if (err) throw err
@@ -94,6 +95,7 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
       //console.log(JSON.stringify(row))
     });
 });
+*/
 
 
 // ------------------------------------------------------------------
