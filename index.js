@@ -91,7 +91,7 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
   client
     .query('SELECT table_schema,table_name FROM information_schema.tables;')
     .on('row', function(row) {
-      console.log(JSON.stringify(row))
+      //console.log(JSON.stringify(row))
     });
 });
 
@@ -400,11 +400,18 @@ function loginResponse(sender) {
 // MESSAGE: results of search query, in the form of generic template
 function searchResponse(text) {
 	var searchTerm = text.substring(6,200) // exclude word "about"
+
 	let series = []
+
+	if (searchTerm.length<2) {
+		series.push("Please enter something for me to search after the word 'Search'")
+		return series
+	}
 
 	// conduct search
 	spotifyApi.searchTracks(searchTerm)
   		.then(function(data) {
+			console.log("Track search success")
   			if (data.body.tracks.total == 0) {
 				series.push("I couldn't find anything, sorry :(")
   				return
@@ -496,6 +503,8 @@ function sendMessages(sender, series, i) {
 					console.error("Error at method sendSeries(): ", error)
 				} else if (response.body.error) {
 					console.error("Error at method sendSeries(): ", response.body.error)
+				} else {
+					console.log("Message delivered: ", messageData)
 				}
 				sendMessages(sender, series, i+1)
 			})
@@ -525,8 +534,9 @@ function send(sender, messageData) {
 			console.error("Error at method send(): ", error)
 		} else if (response.body.error) {
 			console.error("Error at method send(): ", response.body.error)
+		} else {
+			console.log("Message delivered: ", messageData)
 		}
-
 	})
 }
 
