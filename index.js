@@ -506,7 +506,7 @@ function sendMessages(sender, series, i) {
 				} else if (response.body.error) {
 					console.error("Error at method sendSeries(): ", response.body.error)
 				} else {
-					console.log("Message delivered: ", messageData)
+					//console.log("Message delivered: ", data)
 				}
 				sendMessages(sender, series, i+1)
 			})
