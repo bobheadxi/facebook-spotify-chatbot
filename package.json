@@ -4,7 +4,7 @@
   "description": "Facebook chatbot server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -21,9 +21,21 @@
   "devDependencies": {
     "messenger-bot-tester": "^1.3.1",
     "mocha": "https://registry.npmjs.org/mocha/-/mocha-3.4.2.tgz",
-    "mockdate": "^2.0.1",
-    "nock": "^9.0.13",
-    "standard": "^10.0.2",
-    "unexpected": "^10.29.0"
-  }
+    "mockdate": "https://registry.npmjs.org/mockdate/-/mockdate-2.0.1.tgz",
+    "nock": "https://registry.npmjs.org/nock/-/nock-9.0.13.tgz",
+    "standard": "https://registry.npmjs.org/standard/-/standard-10.0.2.tgz",
+    "unexpected": "https://registry.npmjs.org/unexpected/-/unexpected-10.29.0.tgz"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bobheadxi/facebook-spotify-chatbot.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/bobheadxi/facebook-spotify-chatbot/issues"
+  },
+  "homepage": "https://github.com/bobheadxi/facebook-spotify-chatbot#readme"
 }

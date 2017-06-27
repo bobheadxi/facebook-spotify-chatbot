@@ -1,5 +1,4 @@
 'use strict'
-var bot = {}
 
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -176,7 +175,7 @@ app.post('/webhook/', function(req, res) {
 			
 			console.log("Message received: '" + text + "' from " + sender)
 
-			let messageDataSeries = bot.responseBuilder(sender, text)
+			let messageDataSeries = responseBuilder(sender, text)
 
 			setTimeout(function(){
 				sendMessages(sender, messageDataSeries, 0)
@@ -309,12 +308,11 @@ app.get('/callback/', function(req, res) {
 })
 
 // MESSAGE: Choose appropriate response
-bot.responseBuilder = function (sender, text) {
+function responseBuilder(sender, text) {
 	var keyword = text.toLowerCase()
 	if (text.includes(" ")) {
 		keyword = keyword.substring(0, keyword.indexOf(" "))
 	}
-	console.log("Keyword: ", keyword)
 	
 	switch (keyword) {
 		case "help":
@@ -364,7 +362,6 @@ function aboutResponse() {
 	series.push("I am a personal project of Robert Lin.")
 	series.push("I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.")
 	series.push("If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.")
-	series.push("I was last updated on: " + last_updated)
 	series.push("For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases")
 	return series
 }
@@ -585,4 +582,7 @@ function setGetStarted() {
 	})
 }
 
-module.exports = bot
+
+module.exports = {  
+  responseBuilder
+}
