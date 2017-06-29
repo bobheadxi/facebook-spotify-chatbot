@@ -20,7 +20,8 @@
     "heroku-cli-util": "*",
     "nyc": "^11.0.3",
     "assert": "*",
-    "chai": "*"
+    "chai": "*",
+    "sinon": "*"
   },
   "directories": {
     "test": "test"
