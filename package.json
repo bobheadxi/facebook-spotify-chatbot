@@ -4,7 +4,7 @@
   "description": "Facebook chatbot server",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/.bin/nyc mocha"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +21,8 @@
     "nyc": "^11.0.3",
     "assert": "*",
     "chai": "*",
-    "sinon": "*"
+    "sinon": "*",
+    "coveralls": "*"
   },
   "directories": {
     "test": "test"
