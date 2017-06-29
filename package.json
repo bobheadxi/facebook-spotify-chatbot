@@ -12,7 +12,8 @@
     "express": "*",
     "body-parser": "*",
     "request": "*",
-    "pg": "*"
+    "pg": "*",
+    "spotify-web-api-node": "*"
   },
   "devDependencies": {
     "mocha": "*",
