@@ -4,7 +4,9 @@
   "description": "Facebook chatbot server",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/nyc mocha"
+    "test": "mocha",
+    "coverage": "./node_modules/.bin/nyc mocha",
+    "coveralls": "npm run-script coverage && node bin/coveralls.js < coverage/lcov.info"
   },
   "author": "",
   "license": "ISC",
@@ -16,13 +18,14 @@
     "spotify-web-api-node": "*"
   },
   "devDependencies": {
-    "mocha": "*",
-    "heroku-cli-util": "*",
-    "nyc": "^11.0.3",
     "assert": "*",
     "chai": "*",
-    "sinon": "*",
-    "coveralls": "*"
+    "coveralls": "^2.13.1",
+    "heroku-cli-util": "*",
+    "mocha": "*",
+    "mocha-lcov-reporter": "^1.3.0",
+    "nyc": "^11.0.3",
+    "sinon": "*"
   },
   "directories": {
     "test": "test"
