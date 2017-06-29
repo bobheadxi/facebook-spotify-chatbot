@@ -1,5 +1,5 @@
 # Facebook Chatbot with Spotify Integration
-[![Build Status](https://travis-ci.org/bobheadxi/facebook-spotify-chatbot.svg?branch=master)](https://travis-ci.org/bobheadxi/facebook-spotify-chatbot)
+[![Build Status](https://travis-ci.org/bobheadxi/facebook-spotify-chatbot.svg?branch=dev)](https://travis-ci.org/bobheadxi/facebook-spotify-chatbot)
 ## Current Features
 ##### v0.2
 - users can become hosts: the app logs into Spotify, creates a new playlist and assigns the host a passcode
