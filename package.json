@@ -8,11 +8,17 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "express": "*",
+    "body-parser": "*",
+    "request": "*"
+  },
   "devDependencies": {
     "mocha": "*",
     "heroku-cli-util": "*",
-    "nyc": "^11.0.3"
+    "nyc": "^11.0.3",
+    "assert": "*",
+    "chai": "*"
   },
   "directories": {
     "test": "test"
