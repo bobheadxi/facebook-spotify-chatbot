@@ -1,92 +1,112 @@
-"use strict";
+"use strict"
 
-const assert = require("assert");
-var bot = require("../index.js");
+const assert = require('assert')
+const expect = require('chai').expect;
+const sinon = require('sinon')
+const bot = require("../index.js")
+
+
+var herokuServerUri = process.env.HEROKU_URI
 
 describe("Facebook Messenger Bot", function() {
-  describe("test responseBuilder()", function() {
-    var responseDefault = [
-        "Hello! I am a Spotify chatbot.",
-        "Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.",
-        "Type 'About' to learn more about me."
-    ]
-    var date = new Date()
-    var expiry = new Date()
-    expiry.setSeconds(expiry.getSeconds() + 3600)
+    beforeEach(function() {
 
-    var responseAbout = [
-        "I am a personal project of Robert Lin.",
-        "I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.",
-        "If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.",
-        "I was last updated on: " + date,
-        "My current Spotify client access token expires on: " + expiry
-    ]
-    var messageData = {}
-    messageData.attachment = {}
-	messageData.attachment.type = "template"
-    messageData.attachment.payload = {}
-    messageData.attachment.payload.template_type = "generic"
-    messageData.attachment.payload.image_aspect_ratio = "square"
-    messageData.attachment.payload.elements = []
-    var sender = "1234"
-
-    it("for introResponse() : empty term", function() {
-        assert.deepEqual(bot.responseBuilder(sender, ""), responseDefault)
-    });
-
-    it("for introResponse() : keyword not first word", function() {
-        assert.deepEqual(bot.responseBuilder(sender, "chicken about"), responseDefault)
-        assert.deepEqual(bot.responseBuilder(sender, "chicken search"), responseDefault)
-    });
-
-    it('for aboutResponse() : "about" is first word of term', function() {
-        assert.deepEqual(bot.responseBuilder(sender, "about"), responseAbout)
-        assert.deepEqual(bot.responseBuilder(sender, "about me you"), responseAbout)
-    });
-
-    it('for searchResponse() : "search" is first word of term, no result', function() {
-
-        //TODO
-
-        /*
-        let searchResult = ["I couldn't find anything, sorry :("]
-        assert.deepEqual(bot.responseBuilder("search asdkfjalweijfag"), searchResult)
-        */
-    });
-
-    it('for searchResponse() : "search" is first word of term, 1 to 6 results', function() {
-
-        //TODO
-
-        /*
-        let searchResult = ["Here's what I found:"]
-        searchResult.push(messageData)
-
-        assert.deepEqual(bot.responseBuilder("search untitled 07 | levitate"), searchResult)
-        //there should be 2 results
-        */
-    });
-
-    it('for searchResponse() : "search" is first word of term, 7 results', function() {
-
-        //TODO
-
-        /*
-        let searchResult = ["Here's what I found:"]
-        searchResult.push(messageData)
-
-        assert.deepEqual(bot.responseBuilder("search coldplay"), searchResult)
-        */
-    });
-
-    it('login stuff', function() {
+    })
+    afterEach(function() {
         
-        //TODO
+    })
+
+
+    describe("test Facebook interactions", function(){
+        /*
+        it("Should set get started", function(done) {
+            //TODO
+        })
+        it("Retrieve message received from a user", function(done) {
+            //TODO
+        })
+        */
+    
 
     })
 
-    // TODO: Test postbacks
+
+    describe("test responseBuilder() cases with Spotify interactions", function(done) {
+
+        it('when "search" is first term, second term is specific song, should be fewer than 6 results', function() {
+            //TODO
+            /*
+            let searchResult = ["Here's what I found:"]
+            searchResult.push(messageData)
+            assert.deepEqual(bot.responseBuilder("search untitled 07 | levitate"), searchResult)
+            //there should be 2 results
+            */
+        })
+
+        it('when "Search" is first term, second term is specific song, should more than 6 results', function() {
+            //TODO
+            /*
+            let searchResult = ["Here's what I found:"]
+            searchResult.push(messageData)
+            assert.deepEqual(bot.responseBuilder("search coldplay"), searchResult)
+            */
+        })
+
+        it('when "Search" is the first term, but nothing after, should return fail', function() {
+            //TODO
+            /*
+            let searchResult = ["I couldn't find anything, sorry :("]
+            assert.deepEqual(bot.responseBuilder("search asdkfjalweijfag"), searchResult)
+            */
+        })
+    })
+
+    describe("test basic responseBuilder() cases", function() {
+        var responseDefault = [
+            "I am not sure how to respond to that. Type 'Help' to get tips!"
+        ]
+        var responseHelp = [
+            "Hello! I am a Spotify chatbot.",
+            "Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.",
+            "Type 'About' to learn more about me."
+        ]
+        var date = new Date()
+        var responseAbout = [
+            "I am a personal project of Robert Lin.",
+            "I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.",
+            "If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.",
+            "For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases"
+        ]
+        var messageData = {
+            attachment:{
+                type:"template",
+                payload:{
+                    template_type:"generic",
+                    image_aspect_ratio:"square",
+                    elements:[]
+                }
+            }
+        }
+        var sender = "1234"
+
+        it("empty string should return default message", function() {
+            assert.deepEqual(bot.responseBuilder(sender, ""), responseDefault)
+        })
+
+        it("when keyword is not the first term. should return default message", function() {
+            assert.deepEqual(bot.responseBuilder(sender, "chicken about"), responseDefault)
+            assert.deepEqual(bot.responseBuilder(sender, "chicken search"), responseDefault)
+        })
+
+        it('when "About" is the first term, should return about message', function() {
+            assert.deepEqual(bot.responseBuilder(sender, "about"), responseAbout)
+            assert.deepEqual(bot.responseBuilder(sender, "about me you"), responseAbout)
+        })
 
 
-  });
-});
+
+    })
+
+
+
+})
