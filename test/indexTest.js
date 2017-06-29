@@ -1,14 +1,15 @@
 "use strict"
 
-const assert = require("assert")
-var nock = require('nock')
+const assert = require('assert')
+const expect = require('chai').expect;
+const sinon = require('sinon')
+const bot = require("../index.js")
 
-var bot = require("../index.js")
+
 var herokuServerUri = process.env.HEROKU_URI
 
 describe("Facebook Messenger Bot", function() {
     beforeEach(function() {
-        nock.disableNetConnect()
 
     })
     afterEach(function() {
@@ -17,13 +18,14 @@ describe("Facebook Messenger Bot", function() {
 
 
     describe("test Facebook interactions", function(){
+        /*
         it("Should set get started", function(done) {
             //TODO
         })
         it("Retrieve message received from a user", function(done) {
             //TODO
         })
-
+        */
     
 
     })

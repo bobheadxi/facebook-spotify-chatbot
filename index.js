@@ -38,7 +38,7 @@ app.get('/webhook/', function (req, res) {
 // Start server
 app.listen(app.get('port'), function() {
 	console.log('Server is running on port ', app.get('port'))
-	setGetStarted();
+	setGetStarted()
 })
 
 // ------------------------------------------------------------------
@@ -89,11 +89,11 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
   console.log('Connected to postgres! Getting schemas...')
 
   client
-    .query('SELECT table_schema,table_name FROM information_schema.tables;')
+    .query('SELECT table_schema,table_name FROM information_schema.tables')
     .on('row', function(row) {
       //console.log(JSON.stringify(row))
-    });
-});
+    })
+})
 */
 
 
@@ -112,159 +112,172 @@ var hostList = new Map() //array of hosts and their associated passcodes and stu
 app.post('/webhook/', function(req, res) {
 	let messaging_events = req.body.entry[0].messaging
 	
-	// get all events
-	for (let i = 0; i < messaging_events.length; i++) {
-		let event = req.body.entry[0].messaging[i]
-		let sender = event.sender.id
-		
-		// handle incoming messages
-		if (event.message && event.message.text) {
-			if (event.message.is_echo === true) {
-				continue
-			}
+	handleMessagingEvents(messaging_events)
 
-			typingIndicator(sender, "on")
-			let text = event.message.text
-
-			// waiting for passphrase from this user?
-			let songReq = songRequests.get(sender)
-			if (songReq) {
-				if (text.toLowerCase() === 'cancel') {
-					songRequests.delete(sender)
-					send(sender, "Your song request has been cancelled.")
-					continue
-				}
-
-				let host = hostList.get(text)
-				if (host) {
-					songReq.passcode = text
-					songReq.sender = sender
-					songReq.type = "requestapprove"
-					let buttonTemplate = {
-    					"attachment":{
-    						"type":"template",
-      						"payload":{
-        						"template_type":"button",
-        						"text":"A user has requested the song " + songReq.songName 
-										+ " by " + songReq.artist,
-       							"buttons":[
-									{
-									"type": "postback",
-									"title": "Preview",
-									"payload": '{"type": "preview","url": "' + songReq.preview
-										+ '","name": "' + songReq.songName
-										+ '","artist": "' + songReq.artist + '"}'
-									},
-          							{
-            						"type": "postback",
-									"title": "Approve Song",
-            						"payload": JSON.stringify(songReq)
-          							}
-        						]
-      						}
-      					}
-					}
-					send(host.fbId, buttonTemplate)
-					songRequests.delete(sender)
-					send(sender, "Your song request has been delivered.")
-				} else {
-					send(sender, "That is not a valid host code - ask your host again to make sure, or send 'cancel' to cancel your request.")
-				}
-				continue
-			}
-			
-			console.log("Message received: '" + text + "' from " + sender)
-
-			let messageDataSeries = responseBuilder(sender, text)
-
-			setTimeout(function(){
-				sendMessages(sender, messageDataSeries, 0)
-			},300)
-		}
-
-		// handle incoming postback events
-		if (event.postback) {
-			var load = JSON.parse(event.postback.payload)
-			console.log("Postback received of type: " + JSON.stringify(load.type))
-			switch(load.type) {
-				// Handle request for song preview
-				case "preview":
-					console.log("Postback for preview received from " + sender)
-					if (load.url.includes("mp3-preview")) {
-						send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
-						send(sender, audioAttachmentResponse(load.url))
-					} else {
-						send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
-					}
-					break
-				// Handle a song request
-				case "request":
-					console.log("Postback for request received from " + sender)
-					
-					//TODO: save in database instead
-					if (songRequests.has(sender)) {
-						send(sender, "Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.")
-						continue
-					}
-					songRequests.set(sender, {songId:load.id, songName:load.name, artist:load.artist, preview:load.url})
-					send(sender, "Please send the passcode for your host's playlist.")
-
-					break
-				// Handle song request approval
-				case "requestapprove":
-					console.log("Postback for requestconfirm received from " + sender)
-					let host = hostList.get(load.passcode)
-					// host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
-					// load is {passcode, sender, songId, songName, artist, preview}
-
-					// set auth to user, refresh token, add to playlist, set auth back to client
-					spotifyApi.setAccessToken(host.accessToken)
-    				spotifyApi.setRefreshToken(host.refreshToken)
-					spotifyApi.refreshAccessToken()
-  					.then(function(data) {
-    					console.log('The access token has been refreshed!');
-    					spotifyApi.setAccessToken(data.body['access_token']);
-
-						spotifyApi.addTracksToPlaylist(host.spotifyId, host.playlistId, ["spotify:track:" + load.songId])
-						.then(function(data) {
-							send(sender, load.songName + " has been added to your playlist.")
-							send(load.sender, "Your song request for " + load.songName + " has been approved!")
-							spotifyApi.setAccessToken(spotifyClientAccessToken)
-						})
-  					}).catch(function(err) {
-   						console.error('Problem confirm request: ', err);
-						send(sender, "There was a problem approving the song.")
-						send(load.sender, "There was a problem approving the song.")
-						spotifyApi.setAccessToken(spotifyClientAccessToken)
-  					})
-					break
-				// Handle get started button
-				case "getstarted":
-					console.log("Postback for getstarted received from " + sender)
-					setTimeout(function(){
-						sendMessages(sender, introResponse(), 0)
-					},300)
-					break
-				default:
-					console.error("Postback for undefined received from " + sender)
-					send(sender, "Sorry, I don't know how to do that yet :(")
-					break
-			}
-			continue
-		}
-	}
 	res.sendStatus(200)
-	
 })
 
 // RESPOND to Spotify User Login, get Auth codes
 app.get('/callback/', function(req, res) {
-	var code = req.query.code
+	var auth_code = req.query.code
 	var fb_id = req.query.state
+	
+	createHost(auth_code, fb_id)
+
+	res.send("Thank you! Please return to Messenger to continue.")
+})
+
+// Handle events
+function handleMessagingEvents(messaging_events) {
+		// get all events
+	for (let i = 0; i < messaging_events.length; i++) {
+		let event = messaging_events[i]
+		let sender = event.sender.id
+		
+		// handle incoming messages
+		if (event.message && event.message.text) {
+			handleMessage(event)
+		}
+
+		// handle incoming postback events
+		if (event.postback) {
+			handlePostback(event)
+		}
+	}
+}
+
+function handleMessage(event) {
+	if (event.message.is_echo === true) {
+		return
+	}
+	typingIndicator(sender, "on")
+	let text = event.message.text
+
+	// waiting for passphrase from this user?
+	let songReq = songRequests.get(sender)
+	if (songReq) {
+		if (text.toLowerCase() === "cancel") {
+			songRequests.delete(sender)
+			send(sender, "Your song request has been cancelled.")	
+			return
+		}
+
+		let host = hostList.get(text)
+		if (host) {
+			songReq.passcode = text
+			songReq.sender = sender
+			songReq.type = "requestapprove"
+			let buttonTemplate = { attachment: { type: "template", payload: { template_type: "button", text: "A user has requested the song " + songReq.songName + " by " + songReq.artist, buttons: [{ type: "postback", title: "Preview", payload: '{"type": "preview","url": "' + songReq.preview + '","name": "' + songReq.songName + '","artist": "' + songReq.artist + '"}' }, { type: "postback", title: "Approve Song", payload: JSON.stringify(songReq) }] } } }
+			send(host.fbId, buttonTemplate)
+			songRequests.delete(sender)
+			send(sender, "Your song request has been delivered.")
+		} else {
+			send(sender, "That is not a valid host code - ask your host again to make sure, or send 'cancel' to cancel your request.")
+		}
+			return
+		}
+
+		console.log("Message received: '" + text + "' from " + sender)
+		let messageDataSeries = responseBuilder(sender, text)
+		setTimeout(function() {
+			sendMessages(sender, messageDataSeries, 0)
+		}, 300)
+}
+
+// Handle a postback event
+function handlePostback(event) {
+	var load = JSON.parse(event.postback.payload)
+  	console.log("Postback received of type: " + JSON.stringify(load.type))
+	switch (load.type) {
+		// Handle request for song preview
+		case "preview":
+			console.log("Postback for preview received from " + sender)
+			if (load.url.includes("mp3-preview")) {
+				send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
+				send(sender, audioAttachmentResponse(load.url))
+			} else {
+				send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
+			}
+			break
+			// Handle a song request
+		case "request":
+			console.log("Postback for request received from " + sender)
+
+			//TODO: save in database instead
+			if (songRequests.has(sender)) {
+				send(sender, "Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.")
+				break
+			}
+			songRequests.set(sender,
+			{
+				songId: load.id,
+				songName: load.name,
+				artist: load.artist,
+				preview: load.url
+			})
+			send(sender, "Please send the passcode for your host's playlist.")
+
+			break
+		// Handle song request approval
+		case "requestapprove":
+			approveSongRequest(load)
+			break
+		// Handle get started button
+		case "getstarted":
+			console.log("Postback for getstarted received from " + sender)
+			setTimeout(function() {
+				sendMessages(sender, introResponse(), 0)
+			}, 300)
+			break
+		default:
+			console.error("Postback for undefined received from " + sender)
+			send(sender, "Sorry, I don't know how to do that yet :(")
+			break
+	}
+}
+
+function approveSongRequest(load) {
+	console.log("Postback for requestconfirm received from " + sender)
+	let host = hostList.get(load.passcode)
+	// host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
+	// load is {passcode, sender, songId, songName, artist, preview}
+
+	// set auth to user, refresh token, add to playlist, set auth back to client
+	spotifyApi.setAccessToken(host.accessToken)
+	spotifyApi.setRefreshToken(host.refreshToken)
+	spotifyApi
+		.refreshAccessToken()
+		.then(function(data) {
+			console.log("The access token has been refreshed!")
+			spotifyApi.setAccessToken(data.body["access_token"])
+
+			spotifyApi
+				.addTracksToPlaylist(host.spotifyId, host.playlistId, ["spotify:track:" + load.songId])
+				.then(function(data) {
+				send(
+					sender,
+					load.songName + " has been added to your playlist."
+				)
+				send(
+					load.sender,
+					"Your song request for " + load.songName + " has been approved!"
+				)
+				spotifyApi.setAccessToken(spotifyClientAccessToken)
+				})
+		})
+		.catch(function(err) {
+			console.error("Problem confirm request: ", err)
+			send(sender, "There was a problem approving the song.")
+			send(load.sender, "There was a problem approving the song.")
+			spotifyApi.setAccessToken(spotifyClientAccessToken)
+		})
+}
+
+// Request auth codes, get user info, create playlist, save everything, set auth back to client
+function createHost(auth_code, fb_id) {
 	var passcode = fb_id.substring(4,8)
 
-	// Request auth codes, get user info, create playlist, save everything, set auth back to client
-	spotifyApi.authorizationCodeGrant(code)
+	spotifyApi.authorizationCodeGrant(auth_code)
   	.then(function(data) {
 		var token_expiry = data.body['expires_in']
 		var access_token = data.body['access_token']
@@ -281,7 +294,7 @@ app.get('/callback/', function(req, res) {
 			spotifyApi.createPlaylist(spotify_id, passcode, { 'public' : false })
 			.then(function(data) {
 				var playlist_id = data.body.id
-				console.log('Created playlist, id is ' + playlist_id);
+				console.log('Created playlist, id is ' + playlist_id)
 				let confirm = "Authentication complete: your playlist passcode and name is " 
 									+ passcode + ". Tell your friends!"
 				send(fb_id, confirm)
@@ -303,9 +316,7 @@ app.get('/callback/', function(req, res) {
 		send(fb_id, "There was a problem connecting to your Spotify account :(")
 		spotifyApi.setAccessToken(spotifyClientAccessToken)
   	})
-	
-	res.send("Authentication complete! Go back to Messenger to continue.")
-})
+}
 
 // MESSAGE: Choose appropriate response
 function responseBuilder(sender, text) {
@@ -314,11 +325,20 @@ function responseBuilder(sender, text) {
 		keyword = keyword.substring(0, keyword.indexOf(" "))
 	}
 	
+	let series = []
 	switch (keyword) {
 		case "help":
-			return introResponse()
+			series.push("Hello! I am a Spotify chatbot")
+			series.push("Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.")
+			series.push("Type 'Host' to host your own crowdsourced playlist!")
+			series.push("Type 'About' to learn more about me.")
+			return series
 		case "about":
-			return aboutResponse()
+			series.push("I am a personal project of Robert Lin.")
+			series.push("I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.")
+			series.push("If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.")
+			series.push("For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases")
+			return series
 		case "search":
 			return searchResponse(text)
 		case "host":
@@ -343,26 +363,6 @@ function devDataFeedback() {
     		console.log('Something went wrong!', err)
 			series.push(JSON.stringify(err))
   		})
-	return series
-}
-
-// MESSAGE: introduction message
-function introResponse() {
-	let series = []
-	series.push("Hello! I am a Spotify chatbot")
-	series.push("Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.")
-	series.push("Type 'Host' to host your own crowdsourced playlist!")
-	series.push("Type 'About' to learn more about me.")
-	return series
-}
-
-// MESSAGE: about the bot message
-function aboutResponse() {
-	let series = []
-	series.push("I am a personal project of Robert Lin.")
-	series.push("I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.")
-	series.push("If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.")
-	series.push("For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases")
 	return series
 }
 
@@ -460,7 +460,7 @@ function searchResponse(text) {
 			series.push(messageData)
   		}, function(err) {
     		console.error("Error at method searchResponse(): ", err)
-  		});
+  		})
 
 	return series
 }

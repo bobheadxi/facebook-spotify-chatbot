@@ -8,23 +8,9 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.17.2",
-    "chai": "^3.5.0",
-    "express": "^4.15.3",
-    "heroku-cli-util": "^6.1.17",
-    "mocha": "^3.4.2",
-    "pg": "6.2.3",
-    "request": "^2.81.0",
-    "spotify-web-api-node": "^2.4.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "messenger-bot-tester": "^1.3.1",
-    "mocha": "https://registry.npmjs.org/mocha/-/mocha-3.4.2.tgz",
-    "mockdate": "https://registry.npmjs.org/mockdate/-/mockdate-2.0.1.tgz",
-    "nock": "https://registry.npmjs.org/nock/-/nock-9.0.13.tgz",
-    "standard": "https://registry.npmjs.org/standard/-/standard-10.0.2.tgz",
-    "unexpected": "https://registry.npmjs.org/unexpected/-/unexpected-10.29.0.tgz"
+    "nyc": "^11.0.3"
   },
   "directories": {
     "test": "test"
