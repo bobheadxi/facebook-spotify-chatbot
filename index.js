@@ -129,10 +129,10 @@ app.get('/callback/', function(req, res) {
 
 // Handle events
 function handleMessagingEvents(messaging_events) {
-		// get all events
+	// get all events
 	for (let i = 0; i < messaging_events.length; i++) {
 		let event = messaging_events[i]
-		let sender = event.sender.id
+		
 		
 		// handle incoming messages
 		if (event.message && event.message.text) {
@@ -150,8 +150,9 @@ function handleMessage(event) {
 	if (event.message.is_echo === true) {
 		return
 	}
-	typingIndicator(sender, "on")
 	let text = event.message.text
+	let sender = event.sender.id
+	typingIndicator(sender, "on")
 
 	// waiting for passphrase from this user?
 	let songReq = songRequests.get(sender)
@@ -187,6 +188,7 @@ function handleMessage(event) {
 // Handle a postback event
 function handlePostback(event) {
 	var load = JSON.parse(event.postback.payload)
+	let sender = event.sender.id
   	console.log("Postback received of type: " + JSON.stringify(load.type))
 	switch (load.type) {
 		// Handle request for song preview
@@ -398,7 +400,7 @@ function loginResponse(sender) {
 
 // MESSAGE: results of search query, in the form of generic template
 function searchResponse(text) {
-	var searchTerm = text.substring(6,200) // exclude word "about"
+	var searchTerm = text.substring(6,200) // exclude word "search"
 
 	let series = []
 
@@ -584,5 +586,7 @@ function setGetStarted() {
 
 
 module.exports = {  
-  responseBuilder
+  responseBuilder,
+  handlePostback,
+  send
 }

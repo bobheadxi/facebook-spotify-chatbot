@@ -9,8 +9,9 @@ const bot = require("../index.js")
 var herokuServerUri = process.env.HEROKU_URI
 
 describe("Facebook Messenger Bot", function() {
+    
     beforeEach(function() {
-
+        
     })
     afterEach(function() {
         
@@ -30,6 +31,66 @@ describe("Facebook Messenger Bot", function() {
 
     })
 
+    describe("test Facebook postback handling", function(done) {
+        var sender = "1234"
+
+        beforeEach(function() {
+            var sendSpy = sinon.spy(bot, 'send')
+        })
+        afterEach(function() {
+            bot.send.restore()
+        })
+
+        it('when postback is of type "preview", send preview if preview available', function() {
+            var payload = { 
+                    "type": "preview",
+                    "url": "www.spotify.com/mp3-preview",
+                    "name": "song",
+                    "artist": "artist"}
+            var event = {
+                "sender":{"id":"1234"}, 
+                "postback": {"payload": JSON.stringify(payload)}
+            }
+            bot.handlePostback(event)
+            let messageData = {
+    	        "attachment": {
+      		        "type": "audio",
+      		        "payload": {
+        		    "url": "www.spotify.com/mp3-preview"
+      		        }
+      	        }
+	        }
+            assert("Here's a preview of song by artist:", bot.send.getCall(0))
+            assert(messageData, bot.send.getCall(1))
+        }) 
+
+        it('when postback is of type "preview", send error if preview not available', function() {
+            var payload = { 
+                    "type": "preview",
+                    "url": "www.spotify.com/no-preview",
+                    "name": "song",
+                    "artist": "artist"}
+            var event = {
+                "sender":{"id":"1234"}, 
+                "postback": {"payload": JSON.stringify(payload)}
+            }
+            bot.handlePostback(event)
+            assert("Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.", bot.send.getCall(0))
+        })
+/*
+        it('when postback is of type "request", reject if sender has outstanding passcode request', function(){
+            var payload = { 
+                    "type": "request",
+                    "url": "www.spotify.com/no-preview",
+                    "name": "song",
+                    "artist": "artist"}
+            var event = {
+                "sender":{"id":"1234"}, 
+                "postback": {"payload": JSON.stringify(payload)}
+            }
+        })
+*/
+    })
 
     describe("test responseBuilder() cases with Spotify interactions", function(done) {
 
