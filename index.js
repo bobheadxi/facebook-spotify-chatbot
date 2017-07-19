@@ -36,10 +36,13 @@ app.get('/webhook/', function (req, res) {
 })
 
 // Start server
-app.listen(app.get('port'), function() {
-	console.log('Server is running on port ', app.get('port'))
-	setGetStarted()
-})
+if(!module.parent){ 
+    var server = app.listen(app.get('port'), function() {
+		console.log('Server is running on port ', app.get('port'))
+		setGetStarted()
+	})
+}
+
 
 // ------------------------------------------------------------------
 // -------------------------- Spotify API ---------------------------
@@ -189,11 +192,10 @@ function handleMessage(event) {
 function handlePostback(event) {
 	var load = JSON.parse(event.postback.payload)
 	let sender = event.sender.id
-  	console.log("Postback received of type: " + JSON.stringify(load.type))
+  	console.info("Postback received of type: " + JSON.stringify(load.type) + " from " + sender)
 	switch (load.type) {
 		// Handle request for song preview
 		case "preview":
-			console.log("Postback for preview received from " + sender)
 			if (load.url.includes("mp3-preview")) {
 				send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
 				send(sender, audioAttachmentResponse(load.url))
@@ -203,8 +205,6 @@ function handlePostback(event) {
 			break
 			// Handle a song request
 		case "request":
-			console.log("Postback for request received from " + sender)
-
 			//TODO: save in database instead
 			if (songRequests.has(sender)) {
 				send(sender, "Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.")
@@ -226,7 +226,6 @@ function handlePostback(event) {
 			break
 		// Handle get started button
 		case "getstarted":
-			console.log("Postback for getstarted received from " + sender)
 			setTimeout(function() {
 				sendMessages(sender, introResponse(), 0)
 			}, 300)
@@ -239,6 +238,7 @@ function handlePostback(event) {
 }
 
 function approveSongRequest(load) {
+	let sender = load.sender
 	console.log("Postback for requestconfirm received from " + sender)
 	let host = hostList.get(load.passcode)
 	// host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
@@ -585,8 +585,14 @@ function setGetStarted() {
 }
 
 
-module.exports = {  
+module.exports = {
+  setGetStarted,
   responseBuilder,
   handlePostback,
-  send
+  songRequests,
+  approveSongRequest,
+  send,
+  sendMessages,
+  searchResponse,
+  server
 }
