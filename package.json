@@ -23,7 +23,8 @@
     "heroku-cli-util": "*",
     "mocha": "*",
     "istanbul": "*",
-    "sinon": "*"
+    "sinon": "*",
+    "rewire": "*"
   },
   "directories": {
     "test": "test"
