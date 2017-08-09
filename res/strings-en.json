@@ -1,0 +1,36 @@
+{
+    "responseDefault": [
+        "I am not sure how to respond to that. Type 'Help' to get tips!"
+    ],
+    "responseHelp": [
+        "Hello! I am a Spotify chatbot.",
+        "Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.",
+        "Type 'About' to learn more about me."
+    ],
+    "responseAbout": [
+        "I am a personal project of Robert Lin.",
+        "I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.",
+        "If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.",
+        "For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases"
+    ],
+    "responseUnknown": "Sorry, I don't know how to do that yet :(",
+
+
+    "noSearchTerm": "Please enter something for me to search after the word 'Search'",
+    "noSearchResult": "I couldn't find anything, sorry :(",
+    "searchResultFound": "Here's what I found:",
+
+
+    "requestDeliverConfirm": "Your song request has been delivered.",
+    "requestApproveError": "There was a problem approving the song.",
+    "requestCancelled": "Your song request has been cancelled.",
+
+
+    "hostCodeRequestMessage": "Please send the passcode for your host's playlist.",
+    "invalidHostCodeMessage": "That is not a valid host code - ask your host again to make sure, or send 'cancel' to cancel your request.",
+    "noHostCodeSentMessage": "Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.",
+
+
+    "noPreviewAvailableMessage" : "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.",
+    "spotifyConnectError": "There was a problem connecting to your Spotify account :("
+}
