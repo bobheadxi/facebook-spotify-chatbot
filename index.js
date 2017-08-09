@@ -163,7 +163,7 @@ function handleMessage(event) {
 	if (songReq) {
 		if (text.toLowerCase() === "cancel") {
 			songRequests.delete(sender)
-			send(sender, "Your song request has been cancelled.")	
+			send(sender, strings.requestCancelled)	
 			return
 		}
 

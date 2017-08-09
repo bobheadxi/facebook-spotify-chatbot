@@ -23,6 +23,7 @@
 
     "requestDeliverConfirm": "Your song request has been delivered.",
     "requestApproveError": "There was a problem approving the song.",
+    "requestCancelled": "Your song request has been cancelled.",
 
 
     "hostCodeRequestMessage": "Please send the passcode for your host's playlist.",
