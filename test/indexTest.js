@@ -7,6 +7,7 @@ const rewire = require('rewire')
 const bot = rewire("../index.js")
 
 var herokuServerUri = process.env.HEROKU_URI
+var strings = require('../res/strings-en.json')
 
 describe("Facebook Messenger Bot", function() {
     
@@ -87,7 +88,7 @@ describe("Facebook Messenger Bot", function() {
                 "postback": {"payload": JSON.stringify(payload)}
             }
             bot.handlePostback(event)
-            assert("Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.", 
+            assert(strings.noPreviewAvailableMessage, 
                     bot.__get__('send').getCall(0))
             done()
         })
@@ -109,7 +110,7 @@ describe("Facebook Messenger Bot", function() {
                 "postback": {"payload": JSON.stringify(payload)}
             }
             bot.handlePostback(event)
-            assert("Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.",
+            assert(strings.noHostCodeSentMessage,
                     bot.__get__('send').getCall(0))
             done()
         })
@@ -127,7 +128,7 @@ describe("Facebook Messenger Bot", function() {
                 "postback": {"payload": JSON.stringify(payload)}
             }
             bot.handlePostback(event)
-            assert("Please send the passcode for your host's playlist.",
+            assert(strings.hostCodeRequestMessage,
                     bot.__get__('send').getCall(0))
             assert(bot.songRequests.has("1234"))
             done()
@@ -178,7 +179,7 @@ describe("Facebook Messenger Bot", function() {
             }
             bot.handlePostback(event)
 
-            assert("Sorry, I don't know how to do that yet :(",
+            assert(strings.responseUnknown,
                     bot.__get__('send').getCall(0))
             done()
         })
@@ -236,21 +237,10 @@ describe("Facebook Messenger Bot", function() {
     })
 
     describe("test basic responseBuilder() cases", function(done) {
-        var responseDefault = [
-            "I am not sure how to respond to that. Type 'Help' to get tips!"
-        ]
-        var responseHelp = [
-            "Hello! I am a Spotify chatbot.",
-            "Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.",
-            "Type 'About' to learn more about me."
-        ]
+        var responseDefault = strings.responseDefault;
+        var responseHelp = strings.responseHelp;
+        var responseAbout = strings.responseAbout
         var date = new Date()
-        var responseAbout = [
-            "I am a personal project of Robert Lin.",
-            "I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.",
-            "If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.",
-            "For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases"
-        ]
         var messageData = {
             attachment:{
                 type:"template",

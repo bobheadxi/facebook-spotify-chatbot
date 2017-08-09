@@ -6,6 +6,7 @@ const request = require('request')
 const app = express()
 var pg = require('pg')
 var last_updated = new Date()
+var strings = require('./res/strings-en.json')
 
 // ------------------------------------------------------------------
 // --------------------- Facebook Messenger API ---------------------
@@ -174,9 +175,9 @@ function handleMessage(event) {
 			let buttonTemplate = { attachment: { type: "template", payload: { template_type: "button", text: "A user has requested the song " + songReq.songName + " by " + songReq.artist, buttons: [{ type: "postback", title: "Preview", payload: '{"type": "preview","url": "' + songReq.preview + '","name": "' + songReq.songName + '","artist": "' + songReq.artist + '"}' }, { type: "postback", title: "Approve Song", payload: JSON.stringify(songReq) }] } } }
 			send(host.fbId, buttonTemplate)
 			songRequests.delete(sender)
-			send(sender, "Your song request has been delivered.")
+			send(sender, strings.requestDeliverConfirm)
 		} else {
-			send(sender, "That is not a valid host code - ask your host again to make sure, or send 'cancel' to cancel your request.")
+			send(sender, strings.invalidHostCodeMessage)
 		}
 			return
 		}
@@ -200,14 +201,14 @@ function handlePostback(event) {
 				send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
 				send(sender, audioAttachmentResponse(load.url))
 			} else {
-				send(sender, "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.")
+				send(sender, strings.noPreviewAvailableMessage)
 			}
 			break
 			// Handle a song request
 		case "request":
 			//TODO: save in database instead
 			if (songRequests.has(sender)) {
-				send(sender, "Please send a valid passcode before requesting more songs. Send 'Cancel' to cancel your request.")
+				send(sender, strings.noHostCodeSentMessage)
 				break
 			}
 			songRequests.set(sender,
@@ -217,7 +218,7 @@ function handlePostback(event) {
 				artist: load.artist,
 				preview: load.url
 			})
-			send(sender, "Please send the passcode for your host's playlist.")
+			send(sender, strings.hostCodeRequestMessage)
 
 			break
 		// Handle song request approval
@@ -232,7 +233,7 @@ function handlePostback(event) {
 			break
 		default:
 			console.error("Postback for undefined received from " + sender)
-			send(sender, "Sorry, I don't know how to do that yet :(")
+			send(sender, strings.responseUnknown)
 			break
 	}
 }
@@ -269,8 +270,8 @@ function approveSongRequest(load) {
 		})
 		.catch(function(err) {
 			console.error("Problem confirm request: ", err)
-			send(sender, "There was a problem approving the song.")
-			send(load.sender, "There was a problem approving the song.")
+			send(sender, strings.requestApproveError)
+			send(load.sender, strings.requestApproveError)
 			spotifyApi.setAccessToken(spotifyClientAccessToken)
 		})
 }
@@ -315,32 +316,24 @@ function createHost(auth_code, fb_id) {
  		})
   	}).catch(function(err) {
     	console.error('Something went wrong with Spotify authentication: ', err)
-		send(fb_id, "There was a problem connecting to your Spotify account :(")
+		send(fb_id, strings.spotifyConnectError)
 		spotifyApi.setAccessToken(spotifyClientAccessToken)
   	})
 }
 
 // MESSAGE: Choose appropriate response
+// Returns: []
 function responseBuilder(sender, text) {
 	var keyword = text.toLowerCase()
 	if (text.includes(" ")) {
 		keyword = keyword.substring(0, keyword.indexOf(" "))
 	}
 	
-	let series = []
 	switch (keyword) {
 		case "help":
-			series.push("Hello! I am a Spotify chatbot")
-			series.push("Type 'Search' followed by the name of a song you would like to find! For example, you could send me 'search modest mouse' to find songs from the best band ever.")
-			series.push("Type 'Host' to host your own crowdsourced playlist!")
-			series.push("Type 'About' to learn more about me.")
-			return series
+			return strings.responseHelp
 		case "about":
-			series.push("I am a personal project of Robert Lin.")
-			series.push("I am a Facebook Messenger bot that interacts with Spotify to provide various services. I am a work in progress and will be receiving ongoing upgrades to my abilities.")
-			series.push("If I had a more inspired name than 'Spotify-chatbot project', I would be named Bob.")
-			series.push("For release notes go to https://github.com/bobheadxi/facebook-spotify-chatbot/releases")
-			return series
+			return strings.responseAbout
 		case "search":
 			return searchResponse(text)
 		case "host":
@@ -350,7 +343,7 @@ function responseBuilder(sender, text) {
 			return devDataFeedback()
 		*/		
 		default:
-			return ["I am not sure how to respond to that. Type 'Help' to get tips!"]
+			return strings.responseDefault
 	}
 }
 
@@ -405,7 +398,7 @@ function searchResponse(text) {
 	let series = []
 
 	if (searchTerm.length<2) {
-		series.push("Please enter something for me to search after the word 'Search'")
+		series.push(strings.noSearchTerm)
 		return series
 	}
 
@@ -414,7 +407,7 @@ function searchResponse(text) {
   		.then(function(data) {
 			console.log("Track search success")
   			if (data.body.tracks.total == 0) {
-				series.push("I couldn't find anything, sorry :(")
+				series.push(strings.noSearchResult)
   				return
   			} else if (data.body.tracks.total < 7) {
     			var numOfResults = data.body.tracks.total
@@ -458,7 +451,7 @@ function searchResponse(text) {
 				messageData.attachment.payload.elements.push(element)
     		}
 
-			series.push("Here's what I found:")
+			series.push(strings.searchResultFound)
 			series.push(messageData)
   		}, function(err) {
     		console.error("Error at method searchResponse(): ", err)
