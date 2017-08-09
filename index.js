@@ -402,7 +402,11 @@ function searchResponse(text) {
 		return series
 	}
 
-	// conduct search
+	return search(searchTerm)
+}
+
+function search(searchTerm) {
+	let series = []
 	spotifyApi.searchTracks(searchTerm)
   		.then(function(data) {
 			console.log("Track search success")
@@ -453,11 +457,11 @@ function searchResponse(text) {
 
 			series.push(strings.searchResultFound)
 			series.push(messageData)
+			return series
   		}, function(err) {
     		console.error("Error at method searchResponse(): ", err)
+			return []
   		})
-
-	return series
 }
 
 // MESSAGE: audio preview of song
@@ -587,5 +591,6 @@ module.exports = {
   send,
   sendMessages,
   searchResponse,
+  search,
   server
 }
