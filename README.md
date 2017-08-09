@@ -15,18 +15,16 @@
 ![](screenshots/screenshots0-2-2.png)
 
 ## Setup
+Clone the repository first:
+```
+git clone https://github.com/bobheadxi/facebook-spotify-chatbot.git
+```
 ##### Part 1: Heroku
 1. Make an Heroku account and install Heroku tools from https://devcenter.heroku.com/articles/heroku-cli
-2. Install Node from https://nodejs.org/en/, and initiate a Node project
-    ```
-    npm init
-    ```
+2. Install Node from https://nodejs.org/en/
 3. Install Node dependencies from npm-shrinkwrap.json
-4. Set up Git and push to Heroku instance
+4. Push to a new Heroku instance
     ```
-    git init
-    git add .
-    git commit -m "Initial commit"
     heroku create
     git push heroku master
     ```
