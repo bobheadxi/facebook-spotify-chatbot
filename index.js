@@ -410,7 +410,7 @@ function searchResponse(text) {
 
 // Returns: []
 function assembleSearchResponse(data) {
-	return new Promise(function(resolve, reject){
+	return new Promise(function(resolve){
 		let series = []
 		if (data.body.tracks.total == 0) {
 			series.push(strings.noSearchResult)
