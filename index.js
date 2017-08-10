@@ -403,9 +403,8 @@ function searchResponse(text) {
 	let series = []
 	search(searchTerm)
 		.then(function(result) {
-			console.log("Result: " + result)
-			console.log("Result JSON: " + JSON.stringify(result[1]))
-			series.push(result)
+			series.push(result[0])
+			series.push(result[1])
 		}, function(err) {
 			console.log("Error: " + err)
 		})
@@ -494,6 +493,7 @@ function audioAttachmentResponse(link) {
 
 // SEND: array of messages, sent in order recursively
 function sendMessages(sender, series, i) {
+	console.log("Sending series: " + series)
 	if (i < series.length) {
 		typingIndicator(sender, "on")
 		let data = series[i]
