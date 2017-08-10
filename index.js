@@ -403,6 +403,7 @@ function searchResponse(text) {
 	search(searchTerm)
 		.then(function(result) {
 			console.log("Result: " + result)
+			console.log("Result JSON: " + JSON.stringify(result[1]))
 			return result
 		}, function(err) {
 			return []
