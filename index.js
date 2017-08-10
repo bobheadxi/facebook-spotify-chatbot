@@ -406,7 +406,7 @@ function searchResponse(text) {
 }
 
 // Returns: []
-function assembleSearchResponse(body) {
+function assembleSearchResponse(data) {
 	let series = []
 	if (data.body.tracks.total == 0) {
 		series.push(strings.noSearchResult)
