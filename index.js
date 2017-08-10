@@ -402,6 +402,7 @@ function searchResponse(text) {
 	
 	search(searchTerm)
 		.then(function(result) {
+			console.log("Result: " + result)
 			return result
 		}, function(err) {
 			return []
@@ -412,10 +413,10 @@ function assembleSearchResponse(data) {
 	let series = []
 	if (data.body.tracks.total == 0) {
 		series.push(strings.noSearchResult)
-		resolve(series)
+		return series
 	} else if (data.body.tracks.total < 7) {
 		var numOfResults = data.body.tracks.total
-	} else {	
+	} else {
 		var numOfResults = 7
 	}
 
@@ -466,7 +467,8 @@ function search(searchTerm) {
 		spotifyApi.searchTracks(searchTerm)
 			.then(function(data) {
 				console.log("Track search success")
-				resolve(assembleSearchResponse(data))
+				let result = assembleSearchResponse(data)
+				resolve(result)
 			}, function(err) {
 				console.error("Error at method searchResponse(): ", err)
 				reject(err)
