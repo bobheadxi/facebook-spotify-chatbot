@@ -462,18 +462,17 @@ function assembleSearchResponse(data) {
 
 // conduct search
 function search(searchTerm) {
-	spotifyApi.searchTracks(searchTerm)
-  		.then(function(data) {
-			console.log("Track search success")
-			return new Promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
+		spotifyApi.searchTracks(searchTerm)
+			.then(function(data) {
+				console.log("Track search success")
+
 				resolve(assembleSearchResponse(data))
-			})
-  		}, function(err) {
-    		console.error("Error at method searchResponse(): ", err)
-			return new Promise(function(resolve, reject) {
+			}, function(err) {
+				console.error("Error at method searchResponse(): ", err)
 				reject(err)
 			})
-  		})
+	})
 }
 
 // MESSAGE: audio preview of song
