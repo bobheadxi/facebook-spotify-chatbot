@@ -402,9 +402,9 @@ function searchResponse(text) {
 	
 	search(searchTerm)
 		.then(function(result) {
-
+			return result
 		}, function(err) {
-
+			return []
 		})
 }
 
@@ -466,7 +466,6 @@ function search(searchTerm) {
 		spotifyApi.searchTracks(searchTerm)
 			.then(function(data) {
 				console.log("Track search success")
-
 				resolve(assembleSearchResponse(data))
 			}, function(err) {
 				console.error("Error at method searchResponse(): ", err)
