@@ -402,65 +402,62 @@ function searchResponse(text) {
 	
 	search(searchTerm)
 		.then(function(result) {
-			return result
-		}), function(err) {
-			return []
-		}
+
+		}, function(err) {
+
+		})
 }
 
-// Returns: []
 function assembleSearchResponse(data) {
-	return new Promise(function(resolve){
-		let series = []
-		if (data.body.tracks.total == 0) {
-			series.push(strings.noSearchResult)
-			resolve(series)
-		} else if (data.body.tracks.total < 7) {
-			var numOfResults = data.body.tracks.total
-		} else {
-			var numOfResults = 7
-		}
-
-		// build JSON for template message according to messenger api
-		let messageData = {}
-		messageData.attachment = {}
-		messageData.attachment.type = "template"
-		messageData.attachment.payload = {}
-		messageData.attachment.payload.template_type = "generic"
-		messageData.attachment.payload.image_aspect_ratio = "square"
-		messageData.attachment.payload.elements = []
-		for (var i = 0; i < numOfResults; i++) {
-			var item = data.body.tracks.items[i]
-			var element = {}
-			element.title = item.name
-			element.subtitle = item.artists[0].name + " - " + item.album.name
-			element.image_url = item.album.images[0].url
-			element.default_action = {
-				"type": "web_url",
-				"url": "https://open.spotify.com/track/" + item.id
-			}
-			var button_payload = 
-				element.buttons = [{
-					"type": "postback",
-					"title": "Preview",
-					"payload": '{"type": "preview","url": "' + item.preview_url
-						+ '","name": "' + item.name 
-						+ '","artist": "' + item.artists[0].name + '"}'
-					}, {
-						"type": "postback",
-						"title": "Request",
-						"payload": '{"type": "request","id": "' + item.id
-							+ '","name": "' + item.name 
-							+ '","artist": "' + item.artists[0].name 
-							+ '","url": "' + item.preview_url + '"}'
-					}]
-			messageData.attachment.payload.elements.push(element)
-		}
-
-		series.push(strings.searchResultFound)
-		series.push(messageData)
+	let series = []
+	if (data.body.tracks.total == 0) {
+		series.push(strings.noSearchResult)
 		resolve(series)
-	})
+	} else if (data.body.tracks.total < 7) {
+		var numOfResults = data.body.tracks.total
+	} else {	
+		var numOfResults = 7
+	}
+
+	// build JSON for template message according to messenger api
+	let messageData = {}
+	messageData.attachment = {}
+	messageData.attachment.type = "template"
+	messageData.attachment.payload = {}
+	messageData.attachment.payload.template_type = "generic"
+	messageData.attachment.payload.image_aspect_ratio = "square"
+	messageData.attachment.payload.elements = []
+	for (var i = 0; i < numOfResults; i++) {
+		var item = data.body.tracks.items[i]
+		var element = {}
+		element.title = item.name
+		element.subtitle = item.artists[0].name + " - " + item.album.name
+		element.image_url = item.album.images[0].url
+			element.default_action = {
+			"type": "web_url",
+			"url": "https://open.spotify.com/track/" + item.id
+		}
+		var button_payload = 
+			element.buttons = [{
+				"type": "postback",
+				"title": "Preview",
+				"payload": '{"type": "preview","url": "' + item.preview_url
+					+ '","name": "' + item.name 
+					+ '","artist": "' + item.artists[0].name + '"}'
+				}, {
+					"type": "postback",
+					"title": "Request",
+					"payload": '{"type": "request","id": "' + item.id
+						+ '","name": "' + item.name 
+						+ '","artist": "' + item.artists[0].name 
+							+ '","url": "' + item.preview_url + '"}'
+				}]
+		messageData.attachment.payload.elements.push(element)
+	}
+
+	series.push(strings.searchResultFound)
+	series.push(messageData)
+	return series	
 }
 
 // conduct search
@@ -468,10 +465,14 @@ function search(searchTerm) {
 	spotifyApi.searchTracks(searchTerm)
   		.then(function(data) {
 			console.log("Track search success")
-			return assembleSearchResponse(data)
+			return new Promise(function(resolve, reject) {
+				resolve(assembleSearchResponse(data))
+			})
   		}, function(err) {
     		console.error("Error at method searchResponse(): ", err)
-			return []
+			return new Promise(function(resolve, reject) {
+				reject(err)
+			})
   		})
 }
 
