@@ -402,7 +402,12 @@ function searchResponse(text) {
 		return series
 	}
 	
-	let data = search(searchTerm)
+	return search(searchTerm)
+}
+
+// Returns: []
+function assembleSearchResponse(body) {
+	let series = []
 	if (data.body.tracks.total == 0) {
 		series.push(strings.noSearchResult)
   		return
@@ -450,7 +455,6 @@ function searchResponse(text) {
 
 	series.push(strings.searchResultFound)
 	series.push(messageData)
-
 	return series
 }
 
@@ -459,10 +463,10 @@ function search(searchTerm) {
 	spotifyApi.searchTracks(searchTerm)
   		.then(function(data) {
 			console.log("Track search success")
-			return data
+			return assembleSearchResponse(data)
   		}, function(err) {
     		console.error("Error at method searchResponse(): ", err)
-			return {}
+			return []
   		})
 }
 
