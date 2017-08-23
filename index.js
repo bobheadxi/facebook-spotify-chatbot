@@ -381,7 +381,6 @@ function loginResponse(sender) {
             			"type":"web_url",
 						"title":"Log in to Spotify",
             			"url":authoriseURL
-            			
           			}
         		]
       		}
@@ -409,6 +408,21 @@ function searchResponse(text) {
 			console.log("Error: " + err)
 		})
 	return series
+}
+
+// conduct search
+function search(searchTerm) {
+	return new Promise(function(resolve, reject) {
+		spotifyApi.searchTracks(searchTerm)
+			.then(function(data) {
+				console.log("Track search success")
+				let result = assembleSearchResponse(data)
+				resolve(result)
+			}, function(err) {
+				console.error("Error at method searchResponse(): ", err)
+				reject(err)
+			})
+	})
 }
 
 function assembleSearchResponse(data) {
@@ -461,21 +475,6 @@ function assembleSearchResponse(data) {
 	series.push(strings.searchResultFound)
 	series.push(messageData)
 	return series	
-}
-
-// conduct search
-function search(searchTerm) {
-	return new Promise(function(resolve, reject) {
-		spotifyApi.searchTracks(searchTerm)
-			.then(function(data) {
-				console.log("Track search success")
-				let result = assembleSearchResponse(data)
-				resolve(result)
-			}, function(err) {
-				console.error("Error at method searchResponse(): ", err)
-				reject(err)
-			})
-	})
 }
 
 // MESSAGE: audio preview of song
@@ -606,5 +605,6 @@ module.exports = {
   send,
   sendMessages,
   searchResponse,
+  audioAttachmentResponse,
   server
 }
