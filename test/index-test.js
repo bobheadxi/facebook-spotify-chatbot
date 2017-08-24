@@ -18,7 +18,6 @@ describe("Facebook Messenger Bot", function() {
 
     })
 
-
     describe("test Facebook interactions", function(done){
         /*
         it("Should set get started", function(done) {
@@ -28,8 +27,6 @@ describe("Facebook Messenger Bot", function() {
             //TODO
         })
         */
-    
-
     })
 
     describe("test Facebook postback handling", function(done) {
@@ -50,6 +47,8 @@ describe("Facebook Messenger Bot", function() {
             sendMessagesStub()
         })
 
+        // TODO: update for restructured methods
+        /*
         it('when postback is of type "preview", send preview if preview available', function(done) {
             var payload = { 
                     "type": "preview",
@@ -183,91 +182,7 @@ describe("Facebook Messenger Bot", function() {
                     bot.__get__('send').getCall(0))
             done()
         })
-    })
-
-    describe("test Spotify search helpers", function(done) {
-
-        it('when searchResponse() is called without a search term, should return error message', function(done) {
-            assert.deepEqual([strings.noSearchTerm], bot.searchResponse("search"))
-            done()
-        })
-
-        // TODO
-        /*
-        it('when searchResponse() is called with a search term, conduct search with term', function(done) {
-            var searchStub = bot.__set__('search', sinon.stub(bot, 'search').callsFake(function(t) {
-                return new Promise(function(resolve, reject) {
-                    resolve(["Result1", "Result2"])
-                })
-            }))
-
-            var response = bot.searchResponse("search some song")
-            
-            setTimeout(function() {
-                assert.deepEqual(["Result1", "Result2"], response)
-                assert(bot.__get__('search').calledWith("some song"))
-            }, 200)
-            
-            searchStub()
-        })
         */
-    })
-
-    describe("test basic responseBuilder() cases", function(done) {
-        var sendStub
-        var searchStub
-
-        var responseDefault = strings.responseDefault;
-        var responseHelp = strings.responseHelp;
-        var responseAbout = strings.responseAbout
-        var date = new Date()
-        var messageData = {
-            attachment:{
-                type:"template",
-                payload:{
-                    template_type:"generic",
-                    image_aspect_ratio:"square",
-                    elements:[]
-                }
-            }
-        }
-        var sender = "1234"
-
-        beforeEach(function() {
-            sendStub = bot.__set__('send', sinon.stub())
-            searchStub = bot.__set__('searchResponse', sinon.stub())
-        })
-
-        afterEach(function() {
-            sendStub()
-            searchStub()
-        })
-
-        it("empty string should return default message", function(done) {
-            assert.deepEqual(bot.responseBuilder(sender, ""), responseDefault)
-            done()
-        })
-
-        it("when keyword is not the first term. should return default message", function(done) {
-            assert.deepEqual(responseDefault, bot.responseBuilder(sender, "chicken about"))
-            assert.deepEqual(responseDefault, bot.responseBuilder(sender, "chicken search"))
-            done()
-        })
-
-        it('when "About" is the first term, should return about message', function(done) {
-            assert.deepEqual(responseAbout, bot.responseBuilder(sender, "about"))
-            assert.deepEqual(responseAbout, bot.responseBuilder(sender, "about me you"))
-            done()
-        })
-
-        it('when "Search" is first term, should call searchResponse using whole term', function(done) {
-            bot.responseBuilder(sender, "search some song")
-
-            assert.equal(true, bot.__get__('searchResponse').called)
-            assert(bot.__get__('searchResponse').calledWith("search some song"))
-            done()
-        })
-
     })
 
 })
