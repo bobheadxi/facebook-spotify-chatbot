@@ -402,11 +402,12 @@ function searchResponse(text) {
 	let series = []
 	search(searchTerm)
 		.then(function(result) {
-			series.push(result[0])
-			series.push(result[1])
+			for (var i = 0; i < result.length; i++)
+				series.push(result[i])
 		}, function(err) {
 			console.log("Error: " + err)
 		})
+	
 	return series
 }
 
@@ -606,5 +607,6 @@ module.exports = {
   sendMessages,
   searchResponse,
   audioAttachmentResponse,
+  searchResponse,
   server
 }

@@ -185,58 +185,38 @@ describe("Facebook Messenger Bot", function() {
         })
     })
 
-    describe("test responseBuilder() cases with Spotify interactions", function(done) {
-        var sendStub
-        var searchStub
+    describe("test Spotify search helpers", function(done) {
 
-        beforeEach(function(){
-            sendStub = bot.__set__('send', sinon.stub())
-            searchStub = bot.__set__('searchResponse', sinon.stub(bot, 'searchResponse').callsFake(function(t) {
-                return "valid"
+        it('when searchResponse() is called without a search term, should return error message', function(done) {
+            assert.deepEqual([strings.noSearchTerm], bot.searchResponse("search"))
+            done()
+        })
+
+        // TODO
+        /*
+        it('when searchResponse() is called with a search term, conduct search with term', function(done) {
+            var searchStub = bot.__set__('search', sinon.stub(bot, 'search').callsFake(function(t) {
+                return new Promise(function(resolve, reject) {
+                    resolve(["Result1", "Result2"])
+                })
             }))
-        })
-        afterEach(function(){
-            sendStub()
+
+            var response = bot.searchResponse("search some song")
+            
+            setTimeout(function() {
+                assert.deepEqual(["Result1", "Result2"], response)
+                assert(bot.__get__('search').calledWith("some song"))
+            }, 200)
+            
             searchStub()
-            bot.searchResponse.restore()
         })
-
-        it('test the searchStub', function() {
-            assert.equal("valid", bot.searchResponse("text"))
-        })
-
-        it('when "search" is first term, second term is specific song, should be fewer than 6 results', function(done) {
-            //TODO
-            /*
-            let searchResult = ["Here's what I found:"]
-            searchResult.push(messageData)
-            assert.deepEqual(bot.responseBuilder("search untitled 07 | levitate"), searchResult)
-            //there should be 2 results
-            */
-            done()
-        })
-
-        it('when "Search" is first term, second term is specific song, should more than 6 results', function(done) {
-            //TODO
-            /*
-            let searchResult = ["Here's what I found:"]
-            searchResult.push(messageData)
-            assert.deepEqual(bot.responseBuilder("search coldplay"), searchResult)
-            */
-            done()
-        })
-
-        it('when "Search" is the first term, but nothing after, should return fail', function(done) {
-            //TODO
-            /*
-            let searchResult = ["I couldn't find anything, sorry :("]
-            assert.deepEqual(bot.responseBuilder("search asdkfjalweijfag"), searchResult)
-            */
-            done()
-        })
+        */
     })
 
     describe("test basic responseBuilder() cases", function(done) {
+        var sendStub
+        var searchStub
+
         var responseDefault = strings.responseDefault;
         var responseHelp = strings.responseHelp;
         var responseAbout = strings.responseAbout
@@ -254,11 +234,13 @@ describe("Facebook Messenger Bot", function() {
         var sender = "1234"
 
         beforeEach(function() {
-            var sendSpy = sinon.stub(bot, 'send')
+            sendStub = bot.__set__('send', sinon.stub())
+            searchStub = bot.__set__('searchResponse', sinon.stub())
         })
 
         afterEach(function() {
-            bot.send.restore()
+            sendStub()
+            searchStub()
         })
 
         it("empty string should return default message", function(done) {
@@ -267,21 +249,25 @@ describe("Facebook Messenger Bot", function() {
         })
 
         it("when keyword is not the first term. should return default message", function(done) {
-            assert.deepEqual(bot.responseBuilder(sender, "chicken about"), responseDefault)
-            assert.deepEqual(bot.responseBuilder(sender, "chicken search"), responseDefault)
+            assert.deepEqual(responseDefault, bot.responseBuilder(sender, "chicken about"))
+            assert.deepEqual(responseDefault, bot.responseBuilder(sender, "chicken search"))
             done()
         })
 
         it('when "About" is the first term, should return about message', function(done) {
-            assert.deepEqual(bot.responseBuilder(sender, "about"), responseAbout)
-            assert.deepEqual(bot.responseBuilder(sender, "about me you"), responseAbout)
+            assert.deepEqual(responseAbout, bot.responseBuilder(sender, "about"))
+            assert.deepEqual(responseAbout, bot.responseBuilder(sender, "about me you"))
             done()
         })
 
+        it('when "Search" is first term, should call searchResponse using whole term', function(done) {
+            bot.responseBuilder(sender, "search some song")
 
+            assert.equal(true, bot.__get__('searchResponse').called)
+            assert(bot.__get__('searchResponse').calledWith("search some song"))
+            done()
+        })
 
     })
-
-
 
 })
