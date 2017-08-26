@@ -10,10 +10,8 @@ var pg = require('pg')
 var last_updated = new Date()
 var strings = require('./res/strings-en.json')
 
-// ------------------------------------------------------------------
-// --------------------- Facebook Messenger API ---------------------
-// ------------------------------------------------------------------
-// Source: https://github.com/jw84/messenger-bot-tutorial, Copyright (c) 2016 Jerry Wang, MIT License
+// Source: https://github.com/jw84/messenger-bot-tutorial
+// Copyright (c) 2016 Jerry Wang, MIT License
 const fbToken = process.env.FB_TOKEN
 const fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
 
@@ -46,9 +44,6 @@ if(!module.parent){
 	})
 }
 
-// ------------------------------------------------------------------
-// ------------------------- Database (PG) --------------------------
-// ------------------------------------------------------------------
 // Source: https://devcenter.heroku.com/articles/heroku-postgresql 
 
 // TODO: user for song requests? something else??? what do
@@ -67,21 +62,20 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
 })
 */
 
-
-// ------------------------------------------------------------------
-// --------------------------- Functions ----------------------------
-// ------------------------------------------------------------------
-
-// RESPOND to incoming facebook stuff
+/**
+ * When Facebook message event received
+ */
 app.post('/webhook/', function(req, res) {
-	let messaging_events = req.body.entry[0].messaging
+	let messageEvents = req.body.entry[0].messaging
 	
-	handleMessagingEvents(messaging_events)
+	handleMessagingEvents(messageEvents)
 
 	res.sendStatus(200)
 })
 
-// RESPOND to Spotify User Login, get Auth codes
+/**
+ * When Spotify login success
+ */
 app.get('/callback/', function(req, res) {
 	var authenticationCode = req.query.code
 	var facebookId = req.query.state
@@ -91,19 +85,15 @@ app.get('/callback/', function(req, res) {
 	res.send("Thank you! Please return to Messenger to continue.")
 })
 
-// Handle events
-function handleMessagingEvents(messaging_events) {
+function handleMessagingEvents(messageEvents) {
 	// get all events
-	for (let i = 0; i < messaging_events.length; i++) {
-		let event = messaging_events[i]
+	for (let i = 0; i < messageEvents.length; i++) {
+		let event = messageEvents[i]
 		
-		
-		// handle incoming messages
 		if (event.message && event.message.text) {
 			handleMessage(event)
 		}
-
-		// handle incoming postback events
+		
 		if (event.postback) {
 			handlePostback(event)
 		}
@@ -118,12 +108,11 @@ function handleMessage(event) {
 	let senderId = event.sender.id
 	typingIndicator(senderId, false)
 
-	// waiting for passphrase from this user?
 	let songRequest = songRequests.get(senderId)
 	if (songRequest) {
 		let responseMessages = util.handleOutstandingSongRequest(songRequest, senderId, messageText)
 		for (var message in responseMessages) {
-			send(message.senderId, message.messageContent)
+			sendSingleMessage(message.senderId, message.messageContent)
 		}
 		return
 	}
@@ -131,7 +120,7 @@ function handleMessage(event) {
 	console.log("Message received: '" + messageText + "' from " + senderId)
 	let messageDataSeries = util.responseBuilder(senderId, messageText)
 	setTimeout(function() {
-		sendMessages(senderId, messageDataSeries, 0)
+		sendMultipleMessages(senderId, messageDataSeries, 0)
 	}, 300)
 }
 
@@ -139,21 +128,21 @@ function handlePostback(event) {
 	var load = JSON.parse(event.postback.payload)
 	let senderId = event.sender.id
   	console.info("Postback received of type: " + JSON.stringify(load.type) + " from " + senderId)
+	
 	switch (load.type) {
-		// Handle request for song preview
 		case "preview":
 			if (load.url.includes("mp3-preview")) {
-				send(senderId, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
-				send(senderId, util.audioAttachmentResponse(load.url))
+				sendSingleMessage(senderId, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
+				sendSingleMessage(senderId, util.audioAttachmentResponse(load.url))
 			} else {
-				send(senderId, strings.noPreviewAvailableMessage)
+				sendSingleMessage(senderId, strings.noPreviewAvailableMessage)
 			}
 			break
-			// Handle a song request
+
 		case "request":
 			//TODO: save in database instead
 			if (songRequests.has(senderId)) {
-				send(senderId, strings.noHostCodeSentMessage)
+				sendSingleMessage(senderId, strings.noHostCodeSentMessage)
 				break
 			}
 			songRequests.set(senderId,
@@ -163,26 +152,26 @@ function handlePostback(event) {
 				artist: load.artist,
 				preview: load.url
 			})
-			send(senderId, strings.hostCodeRequestMessage)
-
+			sendSingleMessage(senderId, strings.hostCodeRequestMessage)
 			break
-		// Handle song request approval
+
 		case "requestapprove":
 			let responseMessages = util.handleApproveSongRequest(load)
 			for (var message in responseMessages) {
-				send(message.senderId, message.messageContent)
+				sendSingleMessage(message.senderId, message.messageContent)
 			}
 			break
-		// Handle get started button
+
 		case "getstarted":
 			setTimeout(function() {
-				sendMessages(senderId, introResponse(), 0)
+				sendMultipleMessages(senderId, introResponse(), 0)
 			}, 300)
 			break
+
 		default:
 			console.error("Postback for undefined received from " + senderId)
-			send(senderId, strings.responseUnknown)
-			break
+			sendSingleMessage(senderId, strings.responseUnknown)
+			break	
 	}
 }
 
@@ -197,28 +186,28 @@ function handleCreateHost(authenticationCode, facebookId) {
 
 	util.createHost(authenticationCode, facebookId)
 		.then(function(hostData) {
-			send(
+			sendSingleMessage(
 				facebookId, 
 				"Authentication complete: your playlist passcode and name is " + passcode + ". Tell your friends!"
 			)
 			// TODO: Save in database instead
 			util.addHost(String(passcode), hostData)
 		}, function(err) {
-			send(facebookId, strings.spotifyConnectError)
+			sendSingleMessage(facebookId, strings.spotifyConnectError)
 		})
 }
 
 /**
  * Sends an array of messages recursively to maintain order
  * @param {String} senderId
- * @param {Array} messageSeries 
- * @param {int} i
+ * @param {Array} messages 
+ * @param {int} position
  */
-function sendMessages(senderId, messageSeries, i) {
-	console.log("Sending series: " + messageSeries)
-	if (i < messageSeries.length) {
+function sendMultipleMessages(senderId, messages, position) {
+	console.log("Sending series: " + messages)
+	if (position < messages.length) {
 		typingIndicator(senderId, true)
-		let data = messageSeries[i]
+		let data = messages[position]
 
 		if ((typeof data) == "string") {
 			data = {text:data}
@@ -241,7 +230,7 @@ function sendMessages(senderId, messageSeries, i) {
 				} else {
 					//console.log("Message delivered: ", data)
 				}
-				sendMessages(senderId, messageSeries, i+1)
+				sendMultipleMessages(senderId, messages, position+1)
 			})
 		},300)
 	} else {
@@ -251,13 +240,12 @@ function sendMessages(senderId, messageSeries, i) {
 
 /**
  * Sends a single message
- * @param {String} sender
- * @param {String} messageData
+ * @param {String} senderId
+ * @param {String} message
  */
-function send(sender, messageData) {
-	let data = messageData
-	if ((typeof data) == "string") {
-		data = {text:data}
+function sendSingleMessage(senderId, message) {
+	if ((typeof message) == "string") {
+		message = {text:message}
 	}
 
 	request({
@@ -265,8 +253,8 @@ function send(sender, messageData) {
 		qs: {access_token:fbToken},
 		method: 'POST',
 		json: {
-			recipient: {id:sender},
-			message: data,
+			recipient: {id:senderId},
+			message: message,
 		}
 	}, function(error, response, body) {
 		if (error) {
@@ -274,7 +262,7 @@ function send(sender, messageData) {
 		} else if (response.body.error) {
 			console.error("Error at method send(): ", response.body.error)
 		} else {
-			console.log("Message delivered: ", messageData)
+			console.log("Message delivered: ", message)
 		}
 	})
 }
@@ -333,9 +321,9 @@ function setGetStarted() {
 }
 
 module.exports = {
-  setGetStarted,
-  handlePostback,
-  send,
-  sendMessages,
-  server
+	setGetStarted,
+	handlePostback,
+	sendSingleMessage,
+	sendMultipleMessages,
+	server
 }

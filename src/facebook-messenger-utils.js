@@ -1,3 +1,5 @@
+'use strict'
+
 const spotifyModule = require('./spotify-module.js')
 var strings = require('../res/strings-en.json')
 
