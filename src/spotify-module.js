@@ -6,7 +6,6 @@ var SpotifyWebApi = require("spotify-web-api-node")
 const spotifyClientId = process.env.SPOTIFY_CLIENT_ID
 const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET
 const spotifyRedirectUri = process.env.SPOTIFY_REDIRECT_URI
-
 var spotifyClientAccessToken
 
 var spotifyApi = new SpotifyWebApi({

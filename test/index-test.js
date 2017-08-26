@@ -18,15 +18,16 @@ describe("Facebook Messenger Bot", function() {
 
     })
 
+    /*
     describe("test Facebook interactions", function(done){
-        /*
+        
         it("Should set get started", function(done) {
             //TODO
         })
         it("Retrieve message received from a user", function(done) {
             //TODO
         })
-        */
+        
     })
 
     describe("test Facebook postback handling", function(done) {
@@ -47,8 +48,6 @@ describe("Facebook Messenger Bot", function() {
             sendMessagesStub()
         })
 
-        // TODO: update for restructured methods
-        /*
         it('when postback is of type "preview", send preview if preview available', function(done) {
             var payload = { 
                     "type": "preview",
@@ -182,7 +181,8 @@ describe("Facebook Messenger Bot", function() {
                     bot.__get__('send').getCall(0))
             done()
         })
-        */
+        
     })
+    */
 
 })
