@@ -4,14 +4,14 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
+const util = require('./src/facebook-messenger-utils.js')
+
 var pg = require('pg')
 var last_updated = new Date()
 var strings = require('./res/strings-en.json')
 
-// ------------------------------------------------------------------
-// --------------------- Facebook Messenger API ---------------------
-// ------------------------------------------------------------------
-// Source: https://github.com/jw84/messenger-bot-tutorial, Copyright (c) 2016 Jerry Wang, MIT License
+// Source: https://github.com/jw84/messenger-bot-tutorial
+// Copyright (c) 2016 Jerry Wang, MIT License
 const fbToken = process.env.FB_TOKEN
 const fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
 
@@ -44,44 +44,6 @@ if(!module.parent){
 	})
 }
 
-
-// ------------------------------------------------------------------
-// -------------------------- Spotify API ---------------------------
-// ------------------------------------------------------------------
-// Source: https://github.com/thelinmichael/spotify-web-api-node, Copyright (c) 2014 Michael Thelin, MIT License
-
-var SpotifyWebApi = require("spotify-web-api-node")
-const spotifyClientId = process.env.SPOTIFY_CLIENT_ID
-const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET
-const spotifyRedirectUri = process.env.SPOTIFY_REDIRECT_URI
-var redirectUri = spotifyRedirectUri
-var spotifyClientAccessToken
-
-// Initiate Spotify stuff
-var spotifyApi = new SpotifyWebApi({
-  clientId : spotifyClientId,
-  clientSecret : spotifyClientSecret,
-  redirectUri : redirectUri
-})
-
-spotifyApi.clientCredentialsGrant()
-  .then(function(data) {
-  	console.log("Spotify access token request success!")
-
-    
-	spotifyClientAccessToken = data.body['access_token']
-	spotifyApi.setAccessToken(spotifyClientAccessToken)
-    
-  	}, function(err) {
-        console.error("Spotify access token request error: " + err)
-  	})
-
-var expiry = new Date()
-expiry.setSeconds(expiry.getSeconds() + 3600)
-
-// ------------------------------------------------------------------
-// ------------------------- Database (PG) --------------------------
-// ------------------------------------------------------------------
 // Source: https://devcenter.heroku.com/articles/heroku-postgresql 
 
 // TODO: user for song requests? something else??? what do
@@ -100,50 +62,38 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
 })
 */
 
-
-// ------------------------------------------------------------------
-// --------------------------- Functions ----------------------------
-// ------------------------------------------------------------------
-
-// TODO: replace with database tables
-var songRequests = new Map() //array of sender_id that the bot is waiting for a passphrase from
-							 // key: sender, val: {songId, songName, artist, preview}
-var hostList = new Map() //array of hosts and their associated passcodes and stuff
-						 // key: passcode, val: {fbId, spotifyId, playlistId, accessToken, refreshToken}
-
-
-// RESPOND to incoming facebook stuff
+/**
+ * When Facebook message event received
+ */
 app.post('/webhook/', function(req, res) {
-	let messaging_events = req.body.entry[0].messaging
+	let messageEvents = req.body.entry[0].messaging
 	
-	handleMessagingEvents(messaging_events)
+	handleMessagingEvents(messageEvents)
 
 	res.sendStatus(200)
 })
 
-// RESPOND to Spotify User Login, get Auth codes
+/**
+ * When Spotify login success
+ */
 app.get('/callback/', function(req, res) {
-	var auth_code = req.query.code
-	var fb_id = req.query.state
+	var authenticationCode = req.query.code
+	var facebookId = req.query.state
 	
-	createHost(auth_code, fb_id)
+	handleCreateHost(authenticationCode, facebookId)
 
 	res.send("Thank you! Please return to Messenger to continue.")
 })
 
-// Handle events
-function handleMessagingEvents(messaging_events) {
+function handleMessagingEvents(messageEvents) {
 	// get all events
-	for (let i = 0; i < messaging_events.length; i++) {
-		let event = messaging_events[i]
+	for (let i = 0; i < messageEvents.length; i++) {
+		let event = messageEvents[i]
 		
-		
-		// handle incoming messages
 		if (event.message && event.message.text) {
 			handleMessage(event)
 		}
-
-		// handle incoming postback events
+		
 		if (event.postback) {
 			handlePostback(event)
 		}
@@ -154,349 +104,110 @@ function handleMessage(event) {
 	if (event.message.is_echo === true) {
 		return
 	}
-	let text = event.message.text
-	let sender = event.sender.id
-	typingIndicator(sender, "on")
+	let messageText = event.message.text
+	let senderId = event.sender.id
+	typingIndicator(senderId, false)
 
-	// waiting for passphrase from this user?
-	let songReq = songRequests.get(sender)
-	if (songReq) {
-		if (text.toLowerCase() === "cancel") {
-			songRequests.delete(sender)
-			send(sender, strings.requestCancelled)	
-			return
+	let songRequest = songRequests.get(senderId)
+	if (songRequest) {
+		let responseMessages = util.handleOutstandingSongRequest(songRequest, senderId, messageText)
+		for (var message in responseMessages) {
+			sendSingleMessage(message.senderId, message.messageContent)
 		}
+		return
+	}
 
-		let host = hostList.get(text)
-		if (host) {
-			songReq.passcode = text
-			songReq.sender = sender
-			songReq.type = "requestapprove"
-			let buttonTemplate = { attachment: { type: "template", payload: { template_type: "button", text: "A user has requested the song " + songReq.songName + " by " + songReq.artist, buttons: [{ type: "postback", title: "Preview", payload: '{"type": "preview","url": "' + songReq.preview + '","name": "' + songReq.songName + '","artist": "' + songReq.artist + '"}' }, { type: "postback", title: "Approve Song", payload: JSON.stringify(songReq) }] } } }
-			send(host.fbId, buttonTemplate)
-			songRequests.delete(sender)
-			send(sender, strings.requestDeliverConfirm)
-		} else {
-			send(sender, strings.invalidHostCodeMessage)
-		}
-			return
-		}
-
-		console.log("Message received: '" + text + "' from " + sender)
-		let messageDataSeries = responseBuilder(sender, text)
-		setTimeout(function() {
-			sendMessages(sender, messageDataSeries, 0)
-		}, 300)
+	console.log("Message received: '" + messageText + "' from " + senderId)
+	let messageDataSeries = util.responseBuilder(senderId, messageText)
+	setTimeout(function() {
+		sendMultipleMessages(senderId, messageDataSeries, 0)
+	}, 300)
 }
 
-// Handle a postback event
 function handlePostback(event) {
 	var load = JSON.parse(event.postback.payload)
-	let sender = event.sender.id
-  	console.info("Postback received of type: " + JSON.stringify(load.type) + " from " + sender)
+	let senderId = event.sender.id
+  	console.info("Postback received of type: " + JSON.stringify(load.type) + " from " + senderId)
+	
 	switch (load.type) {
-		// Handle request for song preview
 		case "preview":
 			if (load.url.includes("mp3-preview")) {
-				send(sender, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
-				send(sender, audioAttachmentResponse(load.url))
+				sendSingleMessage(senderId, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
+				sendSingleMessage(senderId, util.audioAttachmentResponse(load.url))
 			} else {
-				send(sender, strings.noPreviewAvailableMessage)
+				sendSingleMessage(senderId, strings.noPreviewAvailableMessage)
 			}
 			break
-			// Handle a song request
+
 		case "request":
 			//TODO: save in database instead
-			if (songRequests.has(sender)) {
-				send(sender, strings.noHostCodeSentMessage)
+			if (songRequests.has(senderId)) {
+				sendSingleMessage(senderId, strings.noHostCodeSentMessage)
 				break
 			}
-			songRequests.set(sender,
+			songRequests.set(senderId,
 			{
 				songId: load.id,
 				songName: load.name,
 				artist: load.artist,
 				preview: load.url
 			})
-			send(sender, strings.hostCodeRequestMessage)
+			sendSingleMessage(senderId, strings.hostCodeRequestMessage)
+			break
 
-			break
-		// Handle song request approval
 		case "requestapprove":
-			approveSongRequest(load)
+			let responseMessages = util.handleApproveSongRequest(load)
+			for (var message in responseMessages) {
+				sendSingleMessage(message.senderId, message.messageContent)
+			}
 			break
-		// Handle get started button
+
 		case "getstarted":
 			setTimeout(function() {
-				sendMessages(sender, introResponse(), 0)
+				sendMultipleMessages(senderId, introResponse(), 0)
 			}, 300)
 			break
+
 		default:
-			console.error("Postback for undefined received from " + sender)
-			send(sender, strings.responseUnknown)
-			break
+			console.error("Postback for undefined received from " + senderId)
+			sendSingleMessage(senderId, strings.responseUnknown)
+			break	
 	}
 }
 
-function approveSongRequest(load) {
-	let sender = load.sender
-	console.log("Postback for requestconfirm received from " + sender)
-	let host = hostList.get(load.passcode)
-	// host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
-	// load is {passcode, sender, songId, songName, artist, preview}
+/**
+ * Initiates host creation
+ * @param {String} authenticationCode
+ * @param {String} facebookId
+ */
+function handleCreateHost(authenticationCode, facebookId) {
+	// TODO: better code generation
+	var passcode = facebookId.substring(4,8)
 
-	// set auth to user, refresh token, add to playlist, set auth back to client
-	spotifyApi.setAccessToken(host.accessToken)
-	spotifyApi.setRefreshToken(host.refreshToken)
-	spotifyApi
-		.refreshAccessToken()
-		.then(function(data) {
-			console.log("The access token has been refreshed!")
-			spotifyApi.setAccessToken(data.body["access_token"])
-
-			spotifyApi
-				.addTracksToPlaylist(host.spotifyId, host.playlistId, ["spotify:track:" + load.songId])
-				.then(function(data) {
-				send(
-					sender,
-					load.songName + " has been added to your playlist."
-				)
-				send(
-					load.sender,
-					"Your song request for " + load.songName + " has been approved!"
-				)
-				spotifyApi.setAccessToken(spotifyClientAccessToken)
-				})
-		})
-		.catch(function(err) {
-			console.error("Problem confirm request: ", err)
-			send(sender, strings.requestApproveError)
-			send(load.sender, strings.requestApproveError)
-			spotifyApi.setAccessToken(spotifyClientAccessToken)
-		})
-}
-
-// Request auth codes, get user info, create playlist, save everything, set auth back to client
-function createHost(auth_code, fb_id) {
-	var passcode = fb_id.substring(4,8)
-
-	spotifyApi.authorizationCodeGrant(auth_code)
-  	.then(function(data) {
-		var token_expiry = data.body['expires_in']
-		var access_token = data.body['access_token']
-		var refresh_token = data.body['refresh_token']
-    	spotifyApi.setAccessToken(access_token)
-
-		spotifyApi.getMe()
-		.then(function(data) {
-			var spotify_id = data.body.id
-			console.log('User data request success! Id is ' + spotify_id)		
-
-			// TODO: check if playlist already exists
-			// (passcode, fb_id, spotify_id, playlist_id, access_token, refresh_token, [TODO: token_expiry])
-			spotifyApi.createPlaylist(spotify_id, passcode, { 'public' : false })
-			.then(function(data) {
-				var playlist_id = data.body.id
-				console.log('Created playlist, id is ' + playlist_id)
-				let confirm = "Authentication complete: your playlist passcode and name is " 
-									+ passcode + ". Tell your friends!"
-				send(fb_id, confirm)
-
-				spotifyApi.setAccessToken(spotifyClientAccessToken)
-
-				// TODO: Save in database instead
-				hostList.set(String(passcode), {
-					fbId:fb_id,
-					spotifyId:spotify_id,
-					playlistId:playlist_id,
-					accessToken:access_token,
-					refreshToken:refresh_token
-				})
-  			})
- 		})
-  	}).catch(function(err) {
-    	console.error('Something went wrong with Spotify authentication: ', err)
-		send(fb_id, strings.spotifyConnectError)
-		spotifyApi.setAccessToken(spotifyClientAccessToken)
-  	})
-}
-
-// MESSAGE: Choose appropriate response
-// Returns: []
-function responseBuilder(sender, text) {
-	var keyword = text.toLowerCase()
-	if (text.includes(" ")) {
-		keyword = keyword.substring(0, keyword.indexOf(" "))
-	}
-	
-	switch (keyword) {
-		case "help":
-			return strings.responseHelp
-		case "about":
-			return strings.responseAbout
-		case "search":
-			return searchResponse(text)
-		case "host":
-			return loginResponse(sender)
-		/* Disable for releases
-		case "code":
-			return devDataFeedback()
-		*/		
-		default:
-			return strings.responseDefault
-	}
-}
-
-// for research, add to "keyword" for dev
-function devDataFeedback() {
-	let series = []
-	spotifyApi.getMe()
-  		.then(function(data) {
-   			console.log('Some information about the authenticated user', data.body)
-			series.push(JSON.stringify(data.body))
- 		}, function(err) {
-    		console.log('Something went wrong!', err)
-			series.push(JSON.stringify(err))
-  		})
-	return series
-}
-
-// MESSAGE: create login link, do login thing
-function loginResponse(sender) {
-	var scopes = ['user-read-private', 'playlist-read-collaborative', 'playlist-modify-private', 'playlist-modify-public'],
-   		state = sender // note on 'state': useful for correlating requests and responses 
-		   			   // (https://developer.spotify.com/web-api/authorization-guide/)
-	var authoriseURL = spotifyApi.createAuthorizeURL(scopes, state)
-	console.log("Login URL created: ", authoriseURL)
-	let series = []
-	
-	let buttonTemplate = {
-    	"attachment":{
-    		"type":"template",
-      		"payload":{
-        		"template_type":"button",
-        		"text":"Click this button to log in and create a new playlist!",
-       			"buttons":[
-          			{
-            			"type":"web_url",
-						"title":"Log in to Spotify",
-            			"url":authoriseURL
-          			}
-        		]
-      		}
-      	}
-	}
-	series.push(buttonTemplate)
-	return series
-}
-
-// MESSAGE: results of search query, in the form of generic template
-function searchResponse(text) {
-	var searchTerm = text.substring(6,200) // exclude word "search"
-
-	if (searchTerm.length<2) {
-		let series = [strings.noSearchTerm]
-		return series
-	}
-	
-	let series = []
-	search(searchTerm)
-		.then(function(result) {
-			for (var i = 0; i < result.length; i++)
-				series.push(result[i])
+	util.createHost(authenticationCode, facebookId)
+		.then(function(hostData) {
+			sendSingleMessage(
+				facebookId, 
+				"Authentication complete: your playlist passcode and name is " + passcode + ". Tell your friends!"
+			)
+			// TODO: Save in database instead
+			util.addHost(String(passcode), hostData)
 		}, function(err) {
-			console.log("Error: " + err)
+			sendSingleMessage(facebookId, strings.spotifyConnectError)
 		})
-	
-	return series
 }
 
-// conduct search
-function search(searchTerm) {
-	return new Promise(function(resolve, reject) {
-		spotifyApi.searchTracks(searchTerm)
-			.then(function(data) {
-				console.log("Track search success")
-				let result = assembleSearchResponse(data)
-				resolve(result)
-			}, function(err) {
-				console.error("Error at method searchResponse(): ", err)
-				reject(err)
-			})
-	})
-}
-
-function assembleSearchResponse(data) {
-	let series = []
-	if (data.body.tracks.total == 0) {
-		series.push(strings.noSearchResult)
-		return series
-	} else if (data.body.tracks.total < 7) {
-		var numOfResults = data.body.tracks.total
-	} else {
-		var numOfResults = 7
-	}
-
-	// build JSON for template message according to messenger api
-	let messageData = {}
-	messageData.attachment = {}
-	messageData.attachment.type = "template"
-	messageData.attachment.payload = {}
-	messageData.attachment.payload.template_type = "generic"
-	messageData.attachment.payload.image_aspect_ratio = "square"
-	messageData.attachment.payload.elements = []
-	for (var i = 0; i < numOfResults; i++) {
-		var item = data.body.tracks.items[i]
-		var element = {}
-		element.title = item.name
-		element.subtitle = item.artists[0].name + " - " + item.album.name
-		element.image_url = item.album.images[0].url
-			element.default_action = {
-			"type": "web_url",
-			"url": "https://open.spotify.com/track/" + item.id
-		}
-		var button_payload = 
-			element.buttons = [{
-				"type": "postback",
-				"title": "Preview",
-				"payload": '{"type": "preview","url": "' + item.preview_url
-					+ '","name": "' + item.name 
-					+ '","artist": "' + item.artists[0].name + '"}'
-				}, {
-					"type": "postback",
-					"title": "Request",
-					"payload": '{"type": "request","id": "' + item.id
-						+ '","name": "' + item.name 
-						+ '","artist": "' + item.artists[0].name 
-							+ '","url": "' + item.preview_url + '"}'
-				}]
-		messageData.attachment.payload.elements.push(element)
-	}
-
-	series.push(strings.searchResultFound)
-	series.push(messageData)
-	return series	
-}
-
-// MESSAGE: audio preview of song
-function audioAttachmentResponse(link) {
-	let messageData = {
-    	"attachment": {
-      		"type": "audio",
-      		"payload": {
-        		"url": link
-      		}
-      	}
-	}
-	return(messageData)
-}
-
-// SEND: array of messages, sent in order recursively
-function sendMessages(sender, series, i) {
-	console.log("Sending series: " + series)
-	if (i < series.length) {
-		typingIndicator(sender, "on")
-		let data = series[i]
+/**
+ * Sends an array of messages recursively to maintain order
+ * @param {String} senderId
+ * @param {Array} messages 
+ * @param {int} position
+ */
+function sendMultipleMessages(senderId, messages, position) {
+	console.log("Sending series: " + messages)
+	if (position < messages.length) {
+		typingIndicator(senderId, true)
+		let data = messages[position]
 
 		if ((typeof data) == "string") {
 			data = {text:data}
@@ -508,7 +219,7 @@ function sendMessages(sender, series, i) {
 				qs: {access_token:fbToken},
 				method: 'POST',
 				json: {
-					recipient: {id:sender},
+					recipient: {id:senderId},
 					message: data,
 				}
 			}, function(error, response, body) {
@@ -519,7 +230,7 @@ function sendMessages(sender, series, i) {
 				} else {
 					//console.log("Message delivered: ", data)
 				}
-				sendMessages(sender, series, i+1)
+				sendMultipleMessages(senderId, messages, position+1)
 			})
 		},300)
 	} else {
@@ -527,11 +238,14 @@ function sendMessages(sender, series, i) {
 	}
 }
 
-// SEND: single message
-function send(sender, messageData) {
-	let data = messageData
-	if ((typeof data) == "string") {
-		data = {text:data}
+/**
+ * Sends a single message
+ * @param {String} senderId
+ * @param {String} message
+ */
+function sendSingleMessage(senderId, message) {
+	if ((typeof message) == "string") {
+		message = {text:message}
 	}
 
 	request({
@@ -539,8 +253,8 @@ function send(sender, messageData) {
 		qs: {access_token:fbToken},
 		method: 'POST',
 		json: {
-			recipient: {id:sender},
-			message: data,
+			recipient: {id:senderId},
+			message: message,
 		}
 	}, function(error, response, body) {
 		if (error) {
@@ -548,33 +262,43 @@ function send(sender, messageData) {
 		} else if (response.body.error) {
 			console.error("Error at method send(): ", response.body.error)
 		} else {
-			console.log("Message delivered: ", messageData)
+			console.log("Message delivered: ", message)
 		}
 	})
 }
 
-// SEND: "Typing" indicator toggle, accepts string "on" or "off" as status
-function typingIndicator(sender, status) {
+/**
+ * Initiates a typing indicator
+ * @param {String} senderId
+ * @param {Boolean} status Indicator on or off
+ */
+function typingIndicator(senderId, status) {
+	var state
+	if (status) state = "on"
+ 	else state = "off"
+
 	request({
 		url: fbMessageApiUrl,
 		qs: {access_token:fbToken},
 		method: 'POST',
 		json: {
-			recipient: {id:sender},
-			sender_action: 'typing_' + status,
+			recipient: {id:senderId},
+			sender_action: 'typing_' + state,
 		}
 	}, function(error, response, body) {
 		if (error) {
 			console.error("Error at method typingIndicator(): ", error)
-			console.error("For sender id: ", sender)
+			console.error("For sender id: ", senderId)
 		} else if (response.body.error) {
 			console.error("Error at method typingIndicator(): ", response.body.error)
-			console.error("For sender id: ", sender)
+			console.error("For sender id: ", senderId)
 		}
 	})
 }
 
-// Sets a greeting page for new users
+/**
+ * Prompts Facebook to activate a Get Started page
+ */
 function setGetStarted() {
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messenger_profile',
@@ -596,17 +320,10 @@ function setGetStarted() {
 	})
 }
 
-
 module.exports = {
-  setGetStarted,
-  responseBuilder,
-  handlePostback,
-  songRequests,
-  approveSongRequest,
-  send,
-  sendMessages,
-  searchResponse,
-  audioAttachmentResponse,
-  searchResponse,
-  server
+	setGetStarted,
+	handlePostback,
+	sendSingleMessage,
+	sendMultipleMessages,
+	server
 }
