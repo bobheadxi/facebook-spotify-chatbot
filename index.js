@@ -1,42 +1,31 @@
 'use strict'
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const request = require('request')
-const app = express()
-const util = require('./src/facebook-messenger-utils.js')
+var express = require('express'),
+	bodyParser = require('body-parser'),
+	request = require('request'),
+	app = express(),
+	strings = require('./res/strings-en.json'),
+	MessengerUtilModule = require('./src/facebook-messenger-utils.js')
 
-var pg = require('pg')
-var last_updated = new Date()
-var strings = require('./res/strings-en.json')
+const fbToken = process.env.FB_TOKEN,
+	  fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
 
-// Source: https://github.com/jw84/messenger-bot-tutorial
-// Copyright (c) 2016 Jerry Wang, MIT License
-const fbToken = process.env.FB_TOKEN
-const fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
+var last_updated = new Date(),
+    util = new MessengerUtilModule()
 
+// Setup and start server
 app.set("port", (process.env.PORT || 3000))
-
-// Process application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}))
-
-// Process application/json
 app.use(bodyParser.json())
-
-// Index route
 app.get("/", function (req, res) {
 	res.send("This is Robert's bot server")
 })
-
-// Initiate Facebook stuff
 app.get('/webhook/', function (req, res) {
 	if (req.query['hub.verify_token'] === 'cheesecake') {
 		res.send(req.query['hub.challenge'])
 	}
 	res.send('Error, wrong token')
 })
-
-// Start server
 if(!module.parent){ 
     var server = app.listen(app.get('port'), function() {
 		console.log('Server is running on port ', app.get('port'))
@@ -44,32 +33,12 @@ if(!module.parent){
 	})
 }
 
-// Source: https://devcenter.heroku.com/articles/heroku-postgresql 
-
-// TODO: user for song requests? something else??? what do
-
-/*
-pg.defaults.ssl = true
-pg.connect(process.env.DATABASE_URL, function(err, client) {
-  if (err) throw err
-  console.log('Connected to postgres! Getting schemas...')
-
-  client
-    .query('SELECT table_schema,table_name FROM information_schema.tables')
-    .on('row', function(row) {
-      //console.log(JSON.stringify(row))
-    })
-})
-*/
-
 /**
  * When Facebook message event received
  */
 app.post('/webhook/', function(req, res) {
 	let messageEvents = req.body.entry[0].messaging
-	
 	handleMessagingEvents(messageEvents)
-
 	res.sendStatus(200)
 })
 
@@ -77,11 +46,9 @@ app.post('/webhook/', function(req, res) {
  * When Spotify login success
  */
 app.get('/callback/', function(req, res) {
-	var authenticationCode = req.query.code
-	var facebookId = req.query.state
-	
+	let authenticationCode = req.query.code,
+	    facebookId = req.query.state
 	handleCreateHost(authenticationCode, facebookId)
-
 	res.send("Thank you! Please return to Messenger to continue.")
 })
 
@@ -104,8 +71,10 @@ function handleMessage(event) {
 	if (event.message.is_echo === true) {
 		return
 	}
-	let messageText = event.message.text
-	let senderId = event.sender.id
+	let messageText = event.message.text,
+		senderId = event.sender.id
+	console.log("Message received: '" + messageText + "' from " + senderId)
+	
 	typingIndicator(senderId, false)
 
 	let songRequest = songRequests.get(senderId)
@@ -117,7 +86,6 @@ function handleMessage(event) {
 		return
 	}
 
-	console.log("Message received: '" + messageText + "' from " + senderId)
 	let messageDataSeries = util.responseBuilder(senderId, messageText)
 	setTimeout(function() {
 		sendMultipleMessages(senderId, messageDataSeries, 0)
@@ -125,8 +93,8 @@ function handleMessage(event) {
 }
 
 function handlePostback(event) {
-	var load = JSON.parse(event.postback.payload)
-	let senderId = event.sender.id
+	let load = JSON.parse(event.postback.payload),
+		senderId = event.sender.id
   	console.info("Postback received of type: " + JSON.stringify(load.type) + " from " + senderId)
 	
 	switch (load.type) {
@@ -182,7 +150,7 @@ function handlePostback(event) {
  */
 function handleCreateHost(authenticationCode, facebookId) {
 	// TODO: better code generation
-	var passcode = facebookId.substring(4,8)
+	let passcode = facebookId.substring(4,8)
 
 	util.createHost(authenticationCode, facebookId)
 		.then(function(hostData) {
@@ -190,7 +158,6 @@ function handleCreateHost(authenticationCode, facebookId) {
 				facebookId, 
 				"Authentication complete: your playlist passcode and name is " + passcode + ". Tell your friends!"
 			)
-			// TODO: Save in database instead
 			util.addHost(String(passcode), hostData)
 		}, function(err) {
 			sendSingleMessage(facebookId, strings.spotifyConnectError)
@@ -324,6 +291,5 @@ module.exports = {
 	setGetStarted,
 	handlePostback,
 	sendSingleMessage,
-	sendMultipleMessages,
-	server
+	sendMultipleMessages
 }
