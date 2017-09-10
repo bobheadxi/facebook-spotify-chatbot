@@ -117,13 +117,14 @@ MessengerUtilModule.prototype = {
                     } 
                 } 
             }
+            console.error("host.fbId" + host.fbId)
             responseMessages.push(senderMessagePairMaker(
                 host.fbId, buttonTemplate
             ))
-            this._songRequests.delete(senderId)
             responseMessages.push(senderMessagePairMaker(
                 senderId, strings.requestDeliverConfirm
             ))
+            this._songRequests.delete(senderId)
         } else {
             responseMessages.push(senderMessagePairMaker(
                 senderId, strings.invalidHostCodeMessage
