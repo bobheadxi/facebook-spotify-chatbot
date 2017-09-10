@@ -77,8 +77,9 @@ function handleMessage(event) {
 	
 	typingIndicator(senderId, false)
 
-	let songRequest = util.hasSongRequest(senderId)
-	if (songRequest) {
+	
+	if (util.hasSongRequest(senderId)) {
+		let songRequest = util.getSongRequest(senderId)
 		let responseMessages = util.handleOutstandingSongRequest(songRequest, senderId, messageText)
 		for (var message in responseMessages) {
 			sendSingleMessage(message.senderId, message.messageContent)
