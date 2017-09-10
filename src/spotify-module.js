@@ -91,7 +91,7 @@ SpotifyModule.prototype = {
                     resolve(searchResultData)
                 }).catch(function(err) {
                     console.error("Error at method search(): ", err)
-                    reject(null)
+                    reject()
                 })
         })
     },
