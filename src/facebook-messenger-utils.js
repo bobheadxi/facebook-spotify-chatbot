@@ -295,7 +295,7 @@ MessengerUtilModule.prototype = {
                 let result = assembleSearchResponse(data)
                 for (var i = 0; i < result.length; i++)
                     messageSeries.push(result[i])
-            }, function(err) {
+            }).catch(function() {
                 console.log("Error: " + err)
             })
         
