@@ -36,7 +36,11 @@ MessengerUtilModule.prototype = {
      * @param {String} messageText
      * @return {Array} responseMessages
      */
-    responseBuilder: function(senderId, messageText) {
+    responseBuilder: function(
+        senderId, 
+        messageText,
+        module = this
+    ) {
         var keyword = messageText.toLowerCase()
         if (messageText.includes(" ")) {
             keyword = keyword.substring(0, keyword.indexOf(" "))
@@ -48,9 +52,9 @@ MessengerUtilModule.prototype = {
             case "about":
                 return strings.responseAbout
             case "search":
-                return this._searchResponse(messageText)
+                return module._searchResponse(messageText)
             case "host":
-                return this._loginResponse(senderId)
+                return module._loginResponse(senderId)
             default:
                 return strings.responseDefault
         }
@@ -72,11 +76,16 @@ MessengerUtilModule.prototype = {
      * @param {String} messageText
      * @return {Array} responseMessages of {senderId, responseMessage}
      */
-    handleOutstandingSongRequest: function(songRequest, senderId, messageText) {
+    handleOutstandingSongRequest: function(
+        songRequest, 
+        senderId, 
+        messageText,
+        senderMessagePairMaker = this._senderMessagePairMaker
+    ) {
         let responeMessages = []
         if (messageText.toLowerCase() === "cancel") {
             this._songRequests.delete(senderId)
-            responseMessages.push(this._senderMessagePairMaker(
+            responseMessages.push(senderMessagePairMaker(
                 senderId, strings.requestCancelled
             ))
             return responseMessages
@@ -108,15 +117,15 @@ MessengerUtilModule.prototype = {
                     } 
                 } 
             }
-            responseMessages.push(this._senderMessagePairMaker(
+            responseMessages.push(senderMessagePairMaker(
                 host.fbId, buttonTemplate
             ))
             this._songRequests.delete(senderId)
-            responseMessages.push(this._senderMessagePairMaker(
+            responseMessages.push(senderMessagePairMaker(
                 senderId, strings.requestDeliverConfirm
             ))
         } else {
-            responseMessages.push(this._senderMessagePairMaker(
+            responseMessages.push(senderMessagePairMaker(
                 senderId, strings.invalidHostCodeMessage
             ))
         }
@@ -130,7 +139,8 @@ MessengerUtilModule.prototype = {
      */
     handleApproveSongRequest: function(
         approveSongRequestPayload, 
-        spotifyModule = this._spotifyModule
+        spotifyModule = this._spotifyModule,
+        senderMessagePairMaker = this._senderMessagePairMaker
     ) {
         let responseMessages = []
         let sender = approveSongRequestPayload.sender
@@ -141,19 +151,19 @@ MessengerUtilModule.prototype = {
 
         spotifyModule.approveSongRequest(host, approveSongRequestPayload.songId)
             .then(function(response) {
-                responseMessages.push(this._senderMessagePairMaker(
+                responseMessages.push(senderMessagePairMaker(
                     host.fbId,
                     approveSongRequestPayload.songName + " has been added to your playlist."
                 ))
-                responseMessages.push(this._senderMessagePairMaker(
+                responseMessages.push(senderMessagePairMaker(
                     sender,
                     "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
                 ))
             }, function(err) {
-                responseMessages.push(this._senderMessagePairMaker(
+                responseMessages.push(senderMessagePairMaker(
                     sender, strings.requestApproveError
                 ))
-                responseMessages.push(this._senderMessagePairMaker(
+                responseMessages.push(senderMessagePairMaker(
                     host.fbId, strings.requestApproveError
                 ))
             }
@@ -266,7 +276,11 @@ MessengerUtilModule.prototype = {
         return messageSeries
     },
 
-    _searchResponse: function(messageText, spotifyModule = this._spotifyModule) {
+    _searchResponse: function(
+        messageText, 
+        spotifyModule = this._spotifyModule,
+        assembleSearchResponse = this._assembleSearchResponse
+    ) {
         var searchTerm = messageText.substring(6,200) // exclude word "search"
 
         let messageSeries = []
@@ -278,7 +292,7 @@ MessengerUtilModule.prototype = {
         
         spotifyModule.search(searchTerm)
             .then(function(data) {
-                let result = this._assembleSearchResponse(data)
+                let result = assembleSearchResponse(data)
                 for (var i = 0; i < result.length; i++)
                     messageSeries.push(result[i])
             }, function(err) {
