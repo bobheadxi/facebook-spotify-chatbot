@@ -20,7 +20,7 @@ function SpotifyModule() {
     .then(function(data) {
         console.log("Spotify access token request success!")
         this._spotifyClientAccessToken = data.body['access_token']
-        _spotifyApi.setAccessToken(this._spotifyClientAccessToken)  
+        this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)  
     }, function(err) {
         console.error("Spotify access token request error: " + err)
         this._spotifyClientAccessToken = null
@@ -36,24 +36,24 @@ SpotifyModule.prototype = {
      */
     createHost: function(authenticationCode, facebookId) {
         return new Promise(function(resolve, reject) {
-            _spotifyApi.authorizationCodeGrant(authenticationCode)
+            this._spotifyApi.authorizationCodeGrant(authenticationCode)
                 .then(function(data) {
                 var accessToken = data.body['access_token']
                 var refreshToken = data.body['refresh_token']
-                _spotifyApi.setAccessToken(accessToken)
+                this._spotifyApi.setAccessToken(accessToken)
         
-                spotifyApi.getMe()
+                this._spotifyApi.getMe()
                     .then(function(data) {
                     var spotifyId = data.body.id
                     console.log('User data request success! Id is ' + spotifyId)		
         
                     // TODO: check if playlist already exists
                     // (passcode, fb_id, spotify_id, playlist_id, access_token, refresh_token, [TODO: token_expiry])
-                    spotifyApi.createPlaylist(spotifyId, "Spotify Chatbot Playlist", { 'public' : false })
+                    this._spotifyApi.createPlaylist(spotifyId, "Spotify Chatbot Playlist", { 'public' : false })
                         .then(function(data) {
                             var playlistId = data.body.id
                             console.log('Created playlist, id is ' + playlistId)
-                            spotifyApi.setAccessToken(_spotifyClientAccessToken)
+                            this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)
             
                             resolve({
                                 fbId:facebookId,
@@ -67,7 +67,7 @@ SpotifyModule.prototype = {
                 })
                 .catch(function(err) {
                     console.error('Something went wrong with Spotify authentication: ', err)
-                    spotifyApi.setAccessToken(_spotifyClientAccessToken)
+                    this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)
                     reject(err)
                 })
         })
@@ -80,7 +80,7 @@ SpotifyModule.prototype = {
      */
     search: function(searchTerm) {
         return new Promise(function(resolve, reject) {
-            _spotifyApi.searchTracks(searchTerm)
+            this._spotifyApi.searchTracks(searchTerm)
                 .then(function(searchResultData) {
                     console.log("Track search success")
                     resolve(searchResultData)
@@ -100,23 +100,23 @@ SpotifyModule.prototype = {
     approveSongRequest: function(host, songId) {
         return new Promise(function(resolve, reject) {
             // set auth to user, refresh token, add to playlist, set auth back to client
-            _spotifyApi.setAccessToken(host.accessToken)
-            _spotifyApi.setRefreshToken(host.refreshToken)
+            this._spotifyApi.setAccessToken(host.accessToken)
+            this._spotifyApi.setRefreshToken(host.refreshToken)
             
-            _spotifyApi.refreshAccessToken()
+            this._spotifyApi.refreshAccessToken()
                 .then(function(data) {
                     console.log("The access token has been refreshed!")
-                    _spotifyApi.setAccessToken(data.body["access_token"])
-                    _spotifyApi
+                    this._spotifyApi.setAccessToken(data.body["access_token"])
+                    this._spotifyApi
                         .addTracksToPlaylist(host.spotifyId, host.playlistId, ["spotify:track:" + songId])
                         .then(function(data) {
-                            spotifyApi.setAccessToken(_spotifyClientAccessToken)
+                            this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)
                             resolve()
                         })
                 })
                 .catch(function(err) {
                     console.error("Problem confirm request: ", err)
-                    spotifyApi.setAccessToken(_spotifyClientAccessToken)
+                    this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)
                     reject(err)
                 })
         })
