@@ -117,7 +117,10 @@ MessengerUtilModule.prototype = {
                     } 
                 } 
             }
-            console.error("host.fbId" + host.fbId)
+
+            console.log("Message pushed " + JSON.stringify(senderMessagePairMaker(
+                host.fbId, buttonTemplate
+            )))
             responseMessages.push(senderMessagePairMaker(
                 host.fbId, buttonTemplate
             ))
