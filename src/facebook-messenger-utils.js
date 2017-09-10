@@ -136,7 +136,7 @@ MessengerUtilModule.prototype = {
     /**
      * Handles song request approval
      * @param {Object} approveSongRequestPayload 
-     * @return {Array} responseMessages of {senderId, responseMessage}
+     * @return {Promise} resolves to an array of messages
      */
     handleApproveSongRequest: function(
         approveSongRequestPayload, 
