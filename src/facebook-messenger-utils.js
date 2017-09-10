@@ -84,7 +84,7 @@ MessengerUtilModule.prototype = {
     ) {
         let responseMessages = []
         if (messageText.toLowerCase() === "cancel") {
-            this._songRequests.delete(senderId)
+            songRequests.delete(senderId)
             responseMessages.push(senderMessagePairMaker(
                 senderId, strings.requestCancelled
             ))
@@ -309,11 +309,12 @@ MessengerUtilModule.prototype = {
     _assembleSearchResponse: function(searchResultData) {
         let messageSeries = []
 
-        if (searchResultData.body.tracks.total == 0) {
+        var songTracks = searchResultData.body.tracks.items
+        if (songTracks.length == 0) {
             messageSeries.push(strings.noSearchResult)
             return messageSeries
-        } else if (searchResultData.body.tracks.total < 7) {
-            var numOfResults = searchResultData.body.tracks.total
+        } else if (songTracks.length < 7) {
+            var numOfResults = songTracks.length
         } else {
             var numOfResults = 7
         }
@@ -327,7 +328,7 @@ MessengerUtilModule.prototype = {
         messageData.attachment.payload.image_aspect_ratio = "square"
         messageData.attachment.payload.elements = []
         for (var i = 0; i < numOfResults; i++) {
-            var item = searchResultData.body.tracks.items[i]
+            var item = songTracks[i]
             var element = {}
             element.title = item.name
             element.subtitle = item.artists[0].name + " - " + item.album.name

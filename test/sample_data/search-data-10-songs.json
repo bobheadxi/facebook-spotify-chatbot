@@ -1,0 +1,652 @@
+{ "body" : {
+    "tracks" : {
+        "href" : "https://api.spotify.com/v1/search?query=Muse&type=track&market=CA&offset=0&limit=10",
+        "items" : [ {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/0eFHYz8NmK75zSplL5qlfM"
+            },
+            "href" : "https://api.spotify.com/v1/albums/0eFHYz8NmK75zSplL5qlfM",
+            "id" : "0eFHYz8NmK75zSplL5qlfM",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/6e1be3ceda70250c701caee5a16bef205e94bc98",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/28752dcf4b27ba14c1fc62f04ff469aa53c113d7",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/26098aaa50a3450f0bac8f1a7d7677accf3f3cb6",
+            "width" : 64
+            } ],
+            "name" : "The Resistance",
+            "type" : "album",
+            "uri" : "spotify:album:0eFHYz8NmK75zSplL5qlfM"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 304840,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBAHT0900320"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/4VqPOruhp5EdPBeR92t6lQ"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/4VqPOruhp5EdPBeR92t6lQ",
+        "id" : "4VqPOruhp5EdPBeR92t6lQ",
+        "name" : "Uprising",
+        "popularity" : 76,
+        "preview_url" : "https://p.scdn.co/mp3-preview/104ad0ea32356b9f3b2e95a8610f504c90b0026b?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 1,
+        "type" : "track",
+        "uri" : "spotify:track:4VqPOruhp5EdPBeR92t6lQ"
+        }, {
+        "album" : {
+            "album_type" : "single",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/2mugumSqUWxhW2InJ9dPTv"
+            },
+            "href" : "https://api.spotify.com/v1/albums/2mugumSqUWxhW2InJ9dPTv",
+            "id" : "2mugumSqUWxhW2InJ9dPTv",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/08d56eac0c7d48bb8bf7752b2202c3314db79394",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/e6e7234a572a83fa7a98ee51c225d161a6750e01",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/105e1c4fee340f987c8708b5eaf42b36cf742519",
+            "width" : 64
+            } ],
+            "name" : "Dig Down",
+            "type" : "album",
+            "uri" : "spotify:album:2mugumSqUWxhW2InJ9dPTv"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 228140,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBAHT1700276"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/7JhTr0G0gr3ESY3B9uqPi4"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/7JhTr0G0gr3ESY3B9uqPi4",
+        "id" : "7JhTr0G0gr3ESY3B9uqPi4",
+        "name" : "Dig Down",
+        "popularity" : 73,
+        "preview_url" : "https://p.scdn.co/mp3-preview/ad3bde2594ba70f6193165de81efc06b9eb4a510?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 1,
+        "type" : "track",
+        "uri" : "spotify:track:7JhTr0G0gr3ESY3B9uqPi4"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/0lw68yx3MhKflWFqCsGkIs"
+            },
+            "href" : "https://api.spotify.com/v1/albums/0lw68yx3MhKflWFqCsGkIs",
+            "id" : "0lw68yx3MhKflWFqCsGkIs",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/9e5288926fadb82f873ccf2b45300c3a6f65fa14",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/f1cad0d6974d6236abd07a59106e8450d85cae24",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/81a3f82578dc938c53efdcb405f6a3d3ebbf009f",
+            "width" : 64
+            } ],
+            "name" : "Black Holes And Revelations (Updated 09 version)",
+            "type" : "album",
+            "uri" : "spotify:album:0lw68yx3MhKflWFqCsGkIs"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 212439,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBAHT0500593"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/3lPr8ghNDBLc2uZovNyLs9"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/3lPr8ghNDBLc2uZovNyLs9",
+        "id" : "3lPr8ghNDBLc2uZovNyLs9",
+        "name" : "Supermassive Black Hole",
+        "popularity" : 72,
+        "preview_url" : "https://p.scdn.co/mp3-preview/7ab3e38ce1671da3a185d8685981983a6f39b7bd?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 3,
+        "type" : "track",
+        "uri" : "spotify:track:3lPr8ghNDBLc2uZovNyLs9"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/3KuXEGcqLcnEYWnn3OEGy0"
+            },
+            "href" : "https://api.spotify.com/v1/albums/3KuXEGcqLcnEYWnn3OEGy0",
+            "id" : "3KuXEGcqLcnEYWnn3OEGy0",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/59fbbabeecaade686c44c99e5d1102130556bba1",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/ca0f14d8190f1cfc7183884a65af00ccd3e2301e",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/44b74728e87b87c44f91f505758cad882573d7ea",
+            "width" : 64
+            } ],
+            "name" : "The 2nd Law",
+            "type" : "album",
+            "uri" : "spotify:album:3KuXEGcqLcnEYWnn3OEGy0"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 281040,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBAHT1200390"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/0c4IEciLCDdXEhhKxj4ThA"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/0c4IEciLCDdXEhhKxj4ThA",
+        "id" : "0c4IEciLCDdXEhhKxj4ThA",
+        "name" : "Madness",
+        "popularity" : 72,
+        "preview_url" : "https://p.scdn.co/mp3-preview/2bb1362f5a9c6264811e5904ee986b2edced38a3?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 2,
+        "type" : "track",
+        "uri" : "spotify:track:0c4IEciLCDdXEhhKxj4ThA"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/2wart5Qjnvx1fd7LPdQxgJ"
+            },
+            "href" : "https://api.spotify.com/v1/albums/2wart5Qjnvx1fd7LPdQxgJ",
+            "id" : "2wart5Qjnvx1fd7LPdQxgJ",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/849eecf3c9df835181c2970c435ac2d008346ea3",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/8b6392caa83625135f0f53d6e2b0631bbe4c4c0b",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/8978459cc3ad68b39bd6dbda418625b06ba5d80c",
+            "width" : 64
+            } ],
+            "name" : "Drones",
+            "type" : "album",
+            "uri" : "spotify:album:2wart5Qjnvx1fd7LPdQxgJ"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 316717,
+        "explicit" : true,
+        "external_ids" : {
+            "isrc" : "GBAHT1500068"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/383QXk8nb2YrARMUwDdjQS"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/383QXk8nb2YrARMUwDdjQS",
+        "id" : "383QXk8nb2YrARMUwDdjQS",
+        "name" : "Psycho",
+        "popularity" : 71,
+        "preview_url" : "https://p.scdn.co/mp3-preview/9825aad9fc20222cfd2db3eba32469181b90c8d8?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 3,
+        "type" : "track",
+        "uri" : "spotify:track:383QXk8nb2YrARMUwDdjQS"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/0lw68yx3MhKflWFqCsGkIs"
+            },
+            "href" : "https://api.spotify.com/v1/albums/0lw68yx3MhKflWFqCsGkIs",
+            "id" : "0lw68yx3MhKflWFqCsGkIs",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/9e5288926fadb82f873ccf2b45300c3a6f65fa14",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/f1cad0d6974d6236abd07a59106e8450d85cae24",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/81a3f82578dc938c53efdcb405f6a3d3ebbf009f",
+            "width" : 64
+            } ],
+            "name" : "Black Holes And Revelations (Updated 09 version)",
+            "type" : "album",
+            "uri" : "spotify:album:0lw68yx3MhKflWFqCsGkIs"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 240213,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBAHT0500592"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/3skn2lauGk7Dx6bVIt5DVj"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/3skn2lauGk7Dx6bVIt5DVj",
+        "id" : "3skn2lauGk7Dx6bVIt5DVj",
+        "name" : "Starlight",
+        "popularity" : 73,
+        "preview_url" : "https://p.scdn.co/mp3-preview/f7a1b8a270f310e43ced2720c9af5f29f6476b79?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 2,
+        "type" : "track",
+        "uri" : "spotify:track:3skn2lauGk7Dx6bVIt5DVj"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/0lw68yx3MhKflWFqCsGkIs"
+            },
+            "href" : "https://api.spotify.com/v1/albums/0lw68yx3MhKflWFqCsGkIs",
+            "id" : "0lw68yx3MhKflWFqCsGkIs",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/9e5288926fadb82f873ccf2b45300c3a6f65fa14",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/f1cad0d6974d6236abd07a59106e8450d85cae24",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/81a3f82578dc938c53efdcb405f6a3d3ebbf009f",
+            "width" : 64
+            } ],
+            "name" : "Black Holes And Revelations (Updated 09 version)",
+            "type" : "album",
+            "uri" : "spotify:album:0lw68yx3MhKflWFqCsGkIs"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 366213,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBAHT0500600"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/7ouMYWpwJ422jRcDASZB7P"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/7ouMYWpwJ422jRcDASZB7P",
+        "id" : "7ouMYWpwJ422jRcDASZB7P",
+        "name" : "Knights Of Cydonia",
+        "popularity" : 70,
+        "preview_url" : "https://p.scdn.co/mp3-preview/d7624ec5f93b6d92c1836a95c40ecce463584f6e?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 11,
+        "type" : "track",
+        "uri" : "spotify:track:7ouMYWpwJ422jRcDASZB7P"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/0HcHPBu9aaF1MxOiZmUQTl"
+            },
+            "href" : "https://api.spotify.com/v1/albums/0HcHPBu9aaF1MxOiZmUQTl",
+            "id" : "0HcHPBu9aaF1MxOiZmUQTl",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/ae61915fc3f4b3019200ba6ee58a2a85866461bf",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/523194c8f4f32d0d091a7686fea8fda0411b25a5",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/700cdaab602da14c4f007ad2f9cefcbd9292ac24",
+            "width" : 64
+            } ],
+            "name" : "Absolution (New 09 version)",
+            "type" : "album",
+            "uri" : "spotify:album:0HcHPBu9aaF1MxOiZmUQTl"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 227440,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBCVT0300083"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/7xyYsOvq5Ec3P4fr6mM9fD"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/7xyYsOvq5Ec3P4fr6mM9fD",
+        "id" : "7xyYsOvq5Ec3P4fr6mM9fD",
+        "name" : "Hysteria",
+        "popularity" : 68,
+        "preview_url" : "https://p.scdn.co/mp3-preview/ff29ded2c1aa87ed04cb15ea9b1819dc4db95ad7?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 8,
+        "type" : "track",
+        "uri" : "spotify:track:7xyYsOvq5Ec3P4fr6mM9fD"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/0HcHPBu9aaF1MxOiZmUQTl"
+            },
+            "href" : "https://api.spotify.com/v1/albums/0HcHPBu9aaF1MxOiZmUQTl",
+            "id" : "0HcHPBu9aaF1MxOiZmUQTl",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/ae61915fc3f4b3019200ba6ee58a2a85866461bf",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/523194c8f4f32d0d091a7686fea8fda0411b25a5",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/700cdaab602da14c4f007ad2f9cefcbd9292ac24",
+            "width" : 64
+            } ],
+            "name" : "Absolution (New 09 version)",
+            "type" : "album",
+            "uri" : "spotify:album:0HcHPBu9aaF1MxOiZmUQTl"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 237039,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBCVT0300078"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/2takcwOaAZWiXQijPHIx7B"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/2takcwOaAZWiXQijPHIx7B",
+        "id" : "2takcwOaAZWiXQijPHIx7B",
+        "name" : "Time Is Running Out",
+        "popularity" : 69,
+        "preview_url" : "https://p.scdn.co/mp3-preview/b326e03624cb098d8387e17aa46669edac0d025a?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 3,
+        "type" : "track",
+        "uri" : "spotify:track:2takcwOaAZWiXQijPHIx7B"
+        }, {
+        "album" : {
+            "album_type" : "album",
+            "artists" : [ {
+            "external_urls" : {
+                "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+            } ],
+            "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/album/0eFHYz8NmK75zSplL5qlfM"
+            },
+            "href" : "https://api.spotify.com/v1/albums/0eFHYz8NmK75zSplL5qlfM",
+            "id" : "0eFHYz8NmK75zSplL5qlfM",
+            "images" : [ {
+            "height" : 640,
+            "url" : "https://i.scdn.co/image/6e1be3ceda70250c701caee5a16bef205e94bc98",
+            "width" : 640
+            }, {
+            "height" : 300,
+            "url" : "https://i.scdn.co/image/28752dcf4b27ba14c1fc62f04ff469aa53c113d7",
+            "width" : 300
+            }, {
+            "height" : 64,
+            "url" : "https://i.scdn.co/image/26098aaa50a3450f0bac8f1a7d7677accf3f3cb6",
+            "width" : 64
+            } ],
+            "name" : "The Resistance",
+            "type" : "album",
+            "uri" : "spotify:album:0eFHYz8NmK75zSplL5qlfM"
+        },
+        "artists" : [ {
+            "external_urls" : {
+            "spotify" : "https://open.spotify.com/artist/12Chz98pHFMPJEknJQMWvI"
+            },
+            "href" : "https://api.spotify.com/v1/artists/12Chz98pHFMPJEknJQMWvI",
+            "id" : "12Chz98pHFMPJEknJQMWvI",
+            "name" : "Muse",
+            "type" : "artist",
+            "uri" : "spotify:artist:12Chz98pHFMPJEknJQMWvI"
+        } ],
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TH", "TR", "TW", "US", "UY" ],
+        "disc_number" : 1,
+        "duration_ms" : 235000,
+        "explicit" : false,
+        "external_ids" : {
+            "isrc" : "GBAHT0900322"
+        },
+        "external_urls" : {
+            "spotify" : "https://open.spotify.com/track/0It6VJoMAare1zdV2wxqZq"
+        },
+        "href" : "https://api.spotify.com/v1/tracks/0It6VJoMAare1zdV2wxqZq",
+        "id" : "0It6VJoMAare1zdV2wxqZq",
+        "name" : "Undisclosed Desires",
+        "popularity" : 68,
+        "preview_url" : "https://p.scdn.co/mp3-preview/b165dfbcf22b1c0e107c6b203b4753103b0059e3?cid=8897482848704f2a8f8d7c79726a70d4",
+        "track_number" : 3,
+        "type" : "track",
+        "uri" : "spotify:track:0It6VJoMAare1zdV2wxqZq"
+        } ],
+        "limit" : 10,
+        "next" : "https://api.spotify.com/v1/search?query=Muse&type=track&market=CA&offset=10&limit=10",
+        "offset" : 0,
+        "previous" : null,
+        "total" : 11097
+        }
+    }
+}
