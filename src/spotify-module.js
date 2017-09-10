@@ -1,6 +1,4 @@
 'use strict'
-require('es6-promise').polyfill()
-require('isomorphic-fetch')
 
 var SpotifyWebApi = require("spotify-web-api-node")
 // SpotifyWebApi Copyright (c) 2014 Michael Thelin, MIT License

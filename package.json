@@ -11,9 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "*",
-    "es6-promise": "^4.1.1",
     "express": "*",
-    "isomorphic-fetch": "^2.2.1",
     "pg": "*",
     "request": "*",
     "spotify-web-api-node": "*"

@@ -1,6 +1,4 @@
 'use strict'
-require('es6-promise').polyfill()
-require('isomorphic-fetch')
 
 var SpotifyModule = require('./spotify-module.js'),
     strings = require('../res/strings-en.json')
