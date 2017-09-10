@@ -1,4 +1,6 @@
 'use strict'
+require('es6-promise').polyfill()
+require('isomorphic-fetch')
 
 var express = require('express'),
 	bodyParser = require('body-parser'),

@@ -1,4 +1,6 @@
 'use strict'
+require('es6-promise').polyfill()
+require('isomorphic-fetch')
 
 var SpotifyModule = require('./spotify-module.js'),
     strings = require('../res/strings-en.json')
@@ -292,6 +294,7 @@ MessengerUtilModule.prototype = {
         
         spotifyModule.search(searchTerm)
             .then(function(data) {
+                console.log(data)
                 let result = assembleSearchResponse(data)
                 for (var i = 0; i < result.length; i++)
                     messageSeries.push(result[i])

@@ -1,4 +1,6 @@
 'use strict'
+require('es6-promise').polyfill()
+require('isomorphic-fetch')
 
 var SpotifyWebApi = require("spotify-web-api-node")
 // SpotifyWebApi Copyright (c) 2014 Michael Thelin, MIT License
@@ -87,11 +89,10 @@ SpotifyModule.prototype = {
             spotifyApi.searchTracks(searchTerm)
                 .then(function(searchResultData) {
                     console.log("Track search success")
-                    console.log(searchResultData)
                     resolve(searchResultData)
                 }).catch(function(err) {
                     console.error("Error at method search(): ", err)
-                    reject()
+                    reject(err)
                 })
         })
     },
