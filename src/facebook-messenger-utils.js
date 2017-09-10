@@ -289,7 +289,7 @@ MessengerUtilModule.prototype = {
             messageSeries = [strings.noSearchTerm]
             return messageSeries
         }
-        
+
         spotifyModule.search(searchTerm)
             .then(function(searchData) {
                 console.log("In Messenger-Utils " + searchData)
@@ -324,7 +324,7 @@ MessengerUtilModule.prototype = {
         messageData.attachment.payload.image_aspect_ratio = "square"
         messageData.attachment.payload.elements = []
         for (var i = 0; i < numOfResults; i++) {
-            var item = data.body.tracks.items[i]
+            var item = searchResultData.body.tracks.items[i]
             var element = {}
             element.title = item.name
             element.subtitle = item.artists[0].name + " - " + item.album.name
