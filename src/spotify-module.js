@@ -84,7 +84,7 @@ SpotifyModule.prototype = {
      */
     search: function(searchTerm, spotifyApi = this._spotifyApi) {
         return new Promise(function(resolve, reject) {
-            spotifyApi.searchTracks(searchTerm)
+            this._spotifyApi.searchTracks(searchTerm)
                 .then(function(searchResultData) {
                     console.log("Track search success")
                     console.log("data in spotify-module: " + searchResultData)
