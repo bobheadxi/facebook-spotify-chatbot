@@ -161,6 +161,7 @@ MessengerUtilModule.prototype = {
                     sender,
                     "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
                 ))
+                return responseMessages
             }, function(err) {
                 responseMessages.push(senderMessagePairMaker(
                     sender, strings.requestApproveError
@@ -168,10 +169,9 @@ MessengerUtilModule.prototype = {
                 responseMessages.push(senderMessagePairMaker(
                     host.fbId, strings.requestApproveError
                 ))
+                return responseMessages
             }
         )
-
-        return responseMessages
     },
 
     /**
