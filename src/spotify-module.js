@@ -83,14 +83,7 @@ SpotifyModule.prototype = {
      * @return {Object} searchResultData
      */
     search: function(searchTerm, spotifyApi = this._spotifyApi) {
-        spotifyApi.searchTracks(searchTerm)
-            .then(function(searchResultData) {
-                console.log("Track search success")
-                return searchResultData
-            }).catch(function(err) {
-                console.error("Error at method search(): ", err)
-                return null
-            })
+        return spotifyApi.searchTracks(searchTerm)
     },
 
     /**
