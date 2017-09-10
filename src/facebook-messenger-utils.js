@@ -291,7 +291,7 @@ MessengerUtilModule.prototype = {
         }
 
         var searchResultData = spotifyModule.search(searchTerm)
-        let result = assembleSearchResponse(searchData)
+        let result = assembleSearchResponse(searchResultData)
         for (var i = 0; i < result.length; i++)
             messageSeries.push(result[i])
 
