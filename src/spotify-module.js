@@ -121,6 +121,12 @@ SpotifyModule.prototype = {
         })
     },
 
+    /**
+     * Creates URL for users to authenticate
+     * @param {String[]} scopes
+     * @param {String} state
+     * @return {String} authorizeUrl
+     */
     createAuthorizeUrl: function(
         scopes,
         state,
