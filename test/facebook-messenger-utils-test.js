@@ -30,7 +30,6 @@ describe("Facebook Messenger Util module", function() {
             assert.deepEqual(responseDefault, util.responseBuilder(sender, "chicken search"))
             done()
         })
-
         it('when "About" is first term, should return "about" message', function(done) {
             assert.deepEqual(responseAbout, util.responseBuilder(sender, "about"))
             assert.deepEqual(responseAbout, util.responseBuilder(sender, "about me you"))
@@ -41,7 +40,5 @@ describe("Facebook Messenger Util module", function() {
             // util.responseBuilder(sender, "search some song")
         })
     })
-
-    
 
 })

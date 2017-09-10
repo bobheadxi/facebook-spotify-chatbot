@@ -38,7 +38,9 @@ if(!module.parent){
  */
 app.post('/webhook/', function(req, res) {
 	let messageEvents = req.body.entry[0].messaging
+
 	handleMessagingEvents(messageEvents)
+
 	res.sendStatus(200)
 })
 
@@ -46,9 +48,11 @@ app.post('/webhook/', function(req, res) {
  * When Spotify login success
  */
 app.get('/callback/', function(req, res) {
+
 	let authenticationCode = req.query.code,
 	    facebookId = req.query.state
 	handleCreateHost(authenticationCode, facebookId)
+
 	res.send("Thank you! Please return to Messenger to continue.")
 })
 
@@ -71,6 +75,7 @@ function handleMessage(event) {
 	if (event.message.is_echo === true) {
 		return
 	}
+
 	let messageText = event.message.text,
 		senderId = event.sender.id
 	console.log("Message received: '" + messageText + "' from " + senderId)
@@ -123,7 +128,6 @@ function handlePostback(event) {
 					artist: load.artist,
 					preview: load.url
 				})
-
 			sendSingleMessage(senderId, strings.hostCodeRequestMessage)
 			break
 
