@@ -37,7 +37,7 @@ describe("Facebook Messenger Util module", function() {
         })
 
         it('when "Search is first term', function(done) {
-            // util.responseBuilder(sender, "search some song")
+            done()
         })
     })
 
