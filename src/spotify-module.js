@@ -9,7 +9,7 @@ var SpotifyWebApi = require("spotify-web-api-node")
  * @name SpotifyModule
  */
 function SpotifyModule() {
-    this.spotifyClientAccessToken = ""
+    this._spotifyClientAccessToken = ""
     this._spotifyApi = new SpotifyWebApi({
         clientId : process.env.SPOTIFY_CLIENT_ID,
         clientSecret : process.env.SPOTIFY_CLIENT_SECRET,

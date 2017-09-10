@@ -8,7 +8,7 @@ var SpotifyModule = require('./spotify-module.js'),
  * @name MessengerUtilModule
  */
 function MessengerUtilModule() {
-    this._spotifyApi = new SpotifyModule()
+    this._spotifyModule = new SpotifyModule()
 
     /**
      * Map of sender_id that the bot is waiting for a passphrase from
@@ -136,7 +136,7 @@ MessengerUtilModule.prototype = {
         // host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
         // load is {passcode, sender, songId, songName, artist, preview}
 
-        this._spotifyApi.approveSongRequest(host, approveSongRequestPayload.songId)
+        this._spotifyModule.approveSongRequest(host, approveSongRequestPayload.songId)
             .then(function(response) {
                 responseMessages.push(this._senderMessagePairMaker(
                     host.fbId,
@@ -147,10 +147,12 @@ MessengerUtilModule.prototype = {
                     "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
                 ))
             }, function(err) {
-                responseMessages.push(this.senderMessagePairMaker(
+                responseMessages.push(this._senderMessagePairMaker(
                     sender, strings.requestApproveError
                 ))
-                responseMessages.push(senderMessagePair(host.fbId, strings.requestApproveError))
+                responseMessages.push(this._senderMessagePairMaker(
+                    host.fbId, strings.requestApproveError
+                ))
             }
         )
 
@@ -190,7 +192,7 @@ MessengerUtilModule.prototype = {
      */
     createHost: function(authenticationCode, facebookId) {
         return new Promise(function(resolve,reject) {
-            this._spotifyApi.createHost(authenticationCode, facebookId)
+            this._spotifyModule.createHost(authenticationCode, facebookId)
                 .then(function(data) {
                     resolve(data)
                 }, function(err) {
@@ -230,7 +232,7 @@ MessengerUtilModule.prototype = {
             'playlist-modify-public'
         ]
 
-        var authoriseURL = this._spotifyApi.createAuthorizeURL(scopes, senderId)
+        var authoriseURL = this._spotifyModule.createAuthorizeURL(scopes, senderId)
         // note on 'state = senderId': "useful for correlating requests and responses"
         // (https://developer.spotify.com/web-api/authorization-guide/)
 
@@ -267,7 +269,7 @@ MessengerUtilModule.prototype = {
             return messageSeries
         }
         
-        this._spotifyApi.search(searchTerm)
+        this._spotifyModule.search(searchTerm)
             .then(function(data) {
                 let result = this._assembleSearchResponse(data)
                 for (var i = 0; i < result.length; i++)
