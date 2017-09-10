@@ -118,9 +118,6 @@ MessengerUtilModule.prototype = {
                 } 
             }
 
-            console.log("Message pushed " + JSON.stringify(senderMessagePairMaker(
-                host.fbId, buttonTemplate
-            )))
             responseMessages.push(senderMessagePairMaker(
                 host.fbId, buttonTemplate
             ))
@@ -149,7 +146,7 @@ MessengerUtilModule.prototype = {
         let responseMessages = []
         let sender = approveSongRequestPayload.sender
         console.log("Postback for requestconfirm received from " + sender)
-        let host = hostList.get(approveSongRequestPayload.passcode)
+        let host = this.__hostList.get(approveSongRequestPayload.passcode)
         // host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
         // load is {passcode, sender, songId, songName, artist, preview}
 
