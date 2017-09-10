@@ -24,6 +24,7 @@ function SpotifyModule() {
         console.error("Spotify access token request error", err)
         spotifyClientAccessToken = null
     })
+    console.log(spotifyClientAccessToken)
     
     this._spotifyClientAccessToken = spotifyClientAccessToken
     this._spotifyApi.setAccessToken(spotifyClientAccessToken)  
