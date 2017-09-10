@@ -290,10 +290,10 @@ MessengerUtilModule.prototype = {
             return messageSeries
         }
         
-        spotifyModule.search(searchTerm)
-            .then(function(data) {
-                console.log("In Messenger-Utils" + data)
-                let result = assembleSearchResponse(data)
+        this._spotifyModule.search(searchTerm)
+            .then(function(searchData) {
+                console.log("In Messenger-Utils " + searchData)
+                let result = assembleSearchResponse(searchData)
                 for (var i = 0; i < result.length; i++)
                     messageSeries.push(result[i])
             }).catch(function(err) {
