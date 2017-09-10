@@ -81,7 +81,7 @@ function handleMessage(event) {
 	if (util.hasSongRequest(senderId)) {
 		let songRequest = util.getSongRequest(senderId)
 		let responseMessages = util.handleOutstandingSongRequest(songRequest, senderId, messageText)
-		for (var message in responseMessages) {
+		for (let message of responseMessages) {
 			console.error(message.senderId + " " + message.messageContent)
 			sendSingleMessage(message.senderId, message.messageContent)
 		}
@@ -129,7 +129,7 @@ function handlePostback(event) {
 
 		case "requestapprove":
 			let responseMessages = util.handleApproveSongRequest(load)
-			for (var message in responseMessages) {
+			for (let message of responseMessages) {
 				sendSingleMessage(message.senderId, message.messageContent)
 			}
 			break
