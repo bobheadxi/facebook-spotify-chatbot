@@ -182,7 +182,7 @@ MessengerUtilModule.prototype = {
      * @param {Object} hostData
      */
     addHost: function(passcode, hostData) {
-        this._hostList.set(String(passcode), hostData)
+        this._hostList.set(passcode, hostData)
     },
 
     /**

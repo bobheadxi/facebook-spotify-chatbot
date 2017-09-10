@@ -10,6 +10,7 @@ var SpotifyWebApi = require("spotify-web-api-node")
  */
 function SpotifyModule() {
     this._spotifyClientAccessToken = ""
+
     this._spotifyApi = new SpotifyWebApi({
         clientId : process.env.SPOTIFY_CLIENT_ID,
         clientSecret : process.env.SPOTIFY_CLIENT_SECRET,
@@ -21,8 +22,8 @@ function SpotifyModule() {
         console.log("Spotify access token request success!")
         this._spotifyClientAccessToken = data.body['access_token']
         this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)  
-    }, function(err) {
-        console.error("Spotify access token request error: " + err)
+    }).catch(function(err) {
+        console.error("Spotify access token request error", err)
         this._spotifyClientAccessToken = null
     })
 }
@@ -64,8 +65,7 @@ SpotifyModule.prototype = {
                             })
                         })
                     })
-                })
-                .catch(function(err) {
+                }).catch(function(err) {
                     console.error('Something went wrong with Spotify authentication: ', err)
                     this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)
                     reject(err)
@@ -84,9 +84,9 @@ SpotifyModule.prototype = {
                 .then(function(searchResultData) {
                     console.log("Track search success")
                     resolve(searchResultData)
-                }, function(err) {
+                }).catch(function(err) {
                     console.error("Error at method search(): ", err)
-                    reject(err)
+                    reject(null)
                 })
         })
     },
@@ -113,8 +113,7 @@ SpotifyModule.prototype = {
                             this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)
                             resolve()
                         })
-                })
-                .catch(function(err) {
+                }).catch(function(err) {
                     console.error("Problem confirm request: ", err)
                     this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)
                     reject(err)
