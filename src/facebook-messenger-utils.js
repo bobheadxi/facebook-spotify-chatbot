@@ -57,6 +57,15 @@ MessengerUtilModule.prototype = {
     },
 
     /**
+     * Determines appropriate response message
+     * @param {String} senderId 
+     * @param {Object} songRequest
+     */
+    addSongRequest: function(senderId, songRequest) {
+        this._songRequests.set(senderId, songRequest)
+    },
+
+    /**
      * Checks if Facebook user has outstanding song request
      * @param {Object} songRequest
      * @param {String} senderId
@@ -66,7 +75,7 @@ MessengerUtilModule.prototype = {
     handleOutstandingSongRequest: function(songRequest, senderId, messageText) {
         let responeMessages = []
         if (messageText.toLowerCase() === "cancel") {
-            songRequests.delete(senderId)
+            this._songRequests.delete(senderId)
             responseMessages.push(this._senderMessagePairMaker(
                 senderId, strings.requestCancelled
             ))
@@ -102,7 +111,7 @@ MessengerUtilModule.prototype = {
             responseMessages.push(this._senderMessagePairMaker(
                 host.fbId, buttonTemplate
             ))
-            songRequests.delete(senderId)
+            this._songRequests.delete(senderId)
             responseMessages.push(this._senderMessagePairMaker(
                 senderId, strings.requestDeliverConfirm
             ))
@@ -191,6 +200,27 @@ MessengerUtilModule.prototype = {
         })
     },
 
+    /**
+     * Checks if sender has an outstanding song request
+     * @param {String} senderId
+     * @return {Boolean} hasSongRequest
+     */
+    hasSongRequest: function(senderId) {
+        if (this._songRequests.get(senderId)) {
+            return true
+        } else { 
+            return false
+        }
+    },
+
+    /**
+     * Retrieves SongRequest by senderId
+     * @param {String} senderId
+     * @return {Boolean} hasSongRequest
+     */
+    getSongRequest: function(senderId) {
+        return this._songRequests.get(senderId)
+    },
 
     _loginResponse: function(senderId) {
         var scopes = [

@@ -77,7 +77,7 @@ function handleMessage(event) {
 	
 	typingIndicator(senderId, false)
 
-	let songRequest = songRequests.get(senderId)
+	let songRequest = util.hasSongRequest(senderId)
 	if (songRequest) {
 		let responseMessages = util.handleOutstandingSongRequest(songRequest, senderId, messageText)
 		for (var message in responseMessages) {
@@ -109,17 +109,19 @@ function handlePostback(event) {
 
 		case "request":
 			//TODO: save in database instead
-			if (songRequests.has(senderId)) {
+			if (util.hasSongRequest(senderId)) {
 				sendSingleMessage(senderId, strings.noHostCodeSentMessage)
 				break
 			}
-			songRequests.set(senderId,
-			{
-				songId: load.id,
-				songName: load.name,
-				artist: load.artist,
-				preview: load.url
-			})
+			
+			util.addSongRequest(senderId, 
+				{
+					songId: load.id,
+					songName: load.name,
+					artist: load.artist,
+					preview: load.url
+				})
+
 			sendSingleMessage(senderId, strings.hostCodeRequestMessage)
 			break
 
