@@ -14,20 +14,17 @@ function SpotifyModule() {
         clientSecret : process.env.SPOTIFY_CLIENT_SECRET,
         redirectUri : process.env.SPOTIFY_REDIRECT_URI
     })
-    var spotifyApi = this._spotifyApi
+    var module = this
 
-    var spotifyClientAccessToken
     this._spotifyApi.clientCredentialsGrant()
     .then(function(data) {
         console.log("Spotify access token request success!")
-        spotifyClientAccessToken = data.body['access_token']
+        var spotifyClientAccessToken = data.body['access_token']
+        module._spotifyClientAccessToken = spotifyClientAccessToken
+        module._spotifyApi.setAccessToken(spotifyClientAccessToken)  
     }).catch(function(err) {
         console.error("Spotify access token request error", err)
     })
-
-    console.log(spotifyClientAccessToken)
-    this._spotifyClientAccessToken = spotifyClientAccessToken
-    this._spotifyApi.setAccessToken(spotifyClientAccessToken)  
 }
 
 SpotifyModule.prototype = {
