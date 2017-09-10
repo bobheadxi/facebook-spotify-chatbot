@@ -119,6 +119,14 @@ SpotifyModule.prototype = {
                     reject(err)
                 })
         })
+    },
+
+    createAuthorizeUrl: function(
+        scopes,
+        state,
+        spotifyApi = this._spotifyApi
+    ) {
+        return spotifyApi.createAuthorizeURL(scopes, state)
     }
 }
 
