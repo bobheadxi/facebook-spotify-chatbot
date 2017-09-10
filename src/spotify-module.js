@@ -78,6 +78,20 @@ SpotifyModule.prototype = {
     },
 
     /**
+     * Creates URL for users to authenticate
+     * @param {String[]} scopes
+     * @param {String} state
+     * @return {String} authorizeUrl
+     */
+    createAuthLink: function(
+        scopes,
+        state,
+        spotifyApi = this._spotifyApi
+    ) {
+        return spotifyApi.createAuthorizeURL(scopes, state)
+    },
+
+    /**
      * Conducts Spotify search
      * @param {String} searchTerm 
      * @return {Object} searchResultData
@@ -119,20 +133,6 @@ SpotifyModule.prototype = {
                     reject(err)
                 })
         })
-    },
-
-    /**
-     * Creates URL for users to authenticate
-     * @param {String[]} scopes
-     * @param {String} state
-     * @return {String} authorizeUrl
-     */
-    createAuthorizeUrl: function(
-        scopes,
-        state,
-        spotifyApi = this._spotifyApi
-    ) {
-        return spotifyApi.createAuthorizeURL(scopes, state)
     }
 }
 
