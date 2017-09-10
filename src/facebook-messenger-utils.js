@@ -82,7 +82,7 @@ MessengerUtilModule.prototype = {
         messageText,
         senderMessagePairMaker = this._senderMessagePairMaker
     ) {
-        let responeMessages = []
+        let responseMessages = []
         if (messageText.toLowerCase() === "cancel") {
             this._songRequests.delete(senderId)
             responseMessages.push(senderMessagePairMaker(
