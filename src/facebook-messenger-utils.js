@@ -292,7 +292,6 @@ MessengerUtilModule.prototype = {
 
         spotifyModule.search(searchTerm)
             .then(function(searchData) {
-                console.log("In Messenger-Utils " + searchData)
                 let result = assembleSearchResponse(searchData)
                 for (var i = 0; i < result.length; i++)
                     messageSeries.push(result[i])
@@ -310,7 +309,7 @@ MessengerUtilModule.prototype = {
             messageSeries.push(strings.noSearchResult)
             return messageSeries
         } else if (data.body.tracks.total < 7) {
-            var numOfResults = data.body.tracks.total
+            var numOfResults = searchResultData.body.tracks.total
         } else {
             var numOfResults = 7
         }
