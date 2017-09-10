@@ -19,7 +19,7 @@ function SpotifyModule() {
     .then(function(data) {
         console.log("Spotify access token request success!")
         this._spotifyClientAccessToken = data.body['access_token']
-        _spotifyApi.setAccessToken(_spotifyClientAccessToken)  
+        _spotifyApi.setAccessToken(this._spotifyClientAccessToken)  
     }, function(err) {
         console.error("Spotify access token request error: " + err)
         this._spotifyClientAccessToken = null
