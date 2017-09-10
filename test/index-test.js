@@ -1,15 +1,18 @@
 "use strict"
 
-const assert = require('assert')
-const expect = require('chai').expect;
-const sinon = require('sinon')
-const rewire = require('rewire')
-const bot = rewire("../index.js")
+var assert = require('assert'),
+    expect = require('chai').expect,
+    sinon = require('sinon'),
+    rewire = require('rewire'),
+    strings = require('../res/strings-en.json')
+
+var bot = rewire("../index.js")
 
 var herokuServerUri = process.env.HEROKU_URI
-var strings = require('../res/strings-en.json')
 
-describe("Facebook Messenger Bot", function() {
+describe("index.js tests", function() {
+    const fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
+    const fbToken = 987654321
     
     before(function() {
         
@@ -19,17 +22,37 @@ describe("Facebook Messenger Bot", function() {
     })
 
     /*
-    describe("test Facebook interactions", function(done){
-        
-        it("Should set get started", function(done) {
-            //TODO
-        })
-        it("Retrieve message received from a user", function(done) {
-            //TODO
-        })
-        
-    })
+    describe("test Request interactions", function(done) {
+        var sender = "1234"
+        var postStub
 
+        beforeEach(function() {
+            postStub = sinon.stub(request, 'post')
+        })
+
+        afterEach(function() {
+            bot.request.post.restore();
+        })
+
+        it ('should send message to sender in request body', function() {
+            var request = {
+                url: fbMessageApiUrl,
+                qs: {access_token:fbToken},
+                method: 'POST',
+                json: {
+                    recipient: {id:sender},
+                    message: "Some Message",
+                }
+            }
+            var expected = JSON.stringify(request)
+            bot.sendSingleMessage(sender, "Some Message")
+            assert(postStub.withArgs(expected).calledOnce)
+        })
+
+    }) 
+    */
+
+    /*
     describe("test Facebook postback handling", function(done) {
         var sender = "1234"
         var sendStub
@@ -37,15 +60,13 @@ describe("Facebook Messenger Bot", function() {
         var sendMessagesStub
 
         beforeEach(function() {
-            sendStub = bot.__set__('send', sinon.stub())
-            approveStub = bot.__set__('approveSongRequest', sinon.stub())
-            sendMessagesStub = bot.__set__('sendMessages', sinon.stub())
+            singleSendStub = bot.__set__('send', sinon.stub())
+            multiSendStub = bot.__set__('sendMultipleMessages', sinon.stub())
         })
 
         afterEach(function() {
-            sendStub()
-            approveStub()
-            sendMessagesStub()
+            singleSendStub()
+            multiSendStub()
         })
 
         it('when postback is of type "preview", send preview if preview available', function(done) {

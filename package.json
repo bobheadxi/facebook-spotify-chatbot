@@ -10,10 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "*",
     "body-parser": "*",
-    "request": "*",
+    "express": "*",
     "pg": "*",
+    "request": "*",
     "spotify-web-api-node": "*"
   },
   "devDependencies": {
