@@ -305,10 +305,10 @@ MessengerUtilModule.prototype = {
     _assembleSearchResponse: function(searchResultData) {
         let messageSeries = []
 
-        if (data.body.tracks.total == 0) {
+        if (searchResultData.body.tracks.total == 0) {
             messageSeries.push(strings.noSearchResult)
             return messageSeries
-        } else if (data.body.tracks.total < 7) {
+        } else if (searchResultData.body.tracks.total < 7) {
             var numOfResults = searchResultData.body.tracks.total
         } else {
             var numOfResults = 7
