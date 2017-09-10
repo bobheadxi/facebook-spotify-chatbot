@@ -129,6 +129,7 @@ function handlePostback(event) {
 		case "requestapprove":
 			let responseMessages = util.handleApproveSongRequest(load)
 			for (var message in responseMessages) {
+				console.error(message.senderId + " " + message.messageContent)
 				sendSingleMessage(message.senderId, message.messageContent)
 			}
 			break
@@ -229,10 +230,8 @@ function sendSingleMessage(senderId, message) {
 	}, function(error, response, body) {
 		if (error) {
 			console.error("Error at method send(): ", error)
-			console.error(senderId + " " + message)
 		} else if (response.body.error) {
-			console.error("Error at method send(): ", response.body.error)
-			console.error(senderId + " " + message)			
+			console.error("Error at method send(): ", response.body.error)		
 		} else {
 			console.log("Message delivered: ", message)
 		}
