@@ -9,7 +9,7 @@ var SpotifyWebApi = require("spotify-web-api-node")
  * @name SpotifyModule
  */
 function SpotifyModule() {
-    this._spotifyClientAccessToken = ""
+    this._spotifyClientAccessToken = new String()
 
     this._spotifyApi = new SpotifyWebApi({
         clientId : process.env.SPOTIFY_CLIENT_ID,
@@ -18,14 +18,14 @@ function SpotifyModule() {
     })
 
     this._spotifyApi.clientCredentialsGrant()
-    .then(function(data) {
-        console.log("Spotify access token request success!")
-        this._spotifyClientAccessToken = data.body['access_token']
-        this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)  
-    }).catch(function(err) {
-        console.error("Spotify access token request error", err)
-        this._spotifyClientAccessToken = null
-    })
+        .then(function(data) {
+            console.log("Spotify access token request success!")
+            this._spotifyClientAccessToken = data.body['access_token']
+            this._spotifyApi.setAccessToken(this._spotifyClientAccessToken)  
+        }).catch(function(err) {
+            console.error("Spotify access token request error", err)
+            this._spotifyClientAccessToken = null
+        })
 }
 
 SpotifyModule.prototype = {
