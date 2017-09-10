@@ -229,8 +229,10 @@ function sendSingleMessage(senderId, message) {
 	}, function(error, response, body) {
 		if (error) {
 			console.error("Error at method send(): ", error)
+			console.error(senderId + " " + message)
 		} else if (response.body.error) {
 			console.error("Error at method send(): ", response.body.error)
+			console.error(senderId + " " + message)			
 		} else {
 			console.log("Message delivered: ", message)
 		}
