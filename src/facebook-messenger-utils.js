@@ -151,27 +151,29 @@ MessengerUtilModule.prototype = {
         // host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
         // load is {passcode, sender, songId, songName, artist, preview}
 
-        spotifyModule.approveSongRequest(host, approveSongRequestPayload.songId)
-            .then(function(response) {
-                responseMessages.push(senderMessagePairMaker(
-                    host.fbId,
-                    approveSongRequestPayload.songName + " has been added to your playlist."
-                ))
-                responseMessages.push(senderMessagePairMaker(
-                    sender,
-                    "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
-                ))
-                return responseMessages
-            }, function(err) {
-                responseMessages.push(senderMessagePairMaker(
-                    sender, strings.requestApproveError
-                ))
-                responseMessages.push(senderMessagePairMaker(
-                    host.fbId, strings.requestApproveError
-                ))
-                return responseMessages
-            }
-        )
+        return new Promise(function(resolve, reject) {
+            spotifyModule.approveSongRequest(host, approveSongRequestPayload.songId)
+                .then(function(response) {
+                    responseMessages.push(senderMessagePairMaker(
+                        host.fbId,
+                        approveSongRequestPayload.songName + " has been added to your playlist."
+                    ))
+                    responseMessages.push(senderMessagePairMaker(
+                        sender,
+                        "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
+                    ))
+                    resolve(responseMessages)
+                }, function(err) {
+                    responseMessages.push(senderMessagePairMaker(
+                        sender, strings.requestApproveError
+                    ))
+                    responseMessages.push(senderMessagePairMaker(
+                        host.fbId, strings.requestApproveError
+                    ))
+                    resolve(responseMessages)
+                }
+            )
+        })
     },
 
     /**

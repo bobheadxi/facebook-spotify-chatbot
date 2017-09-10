@@ -128,12 +128,12 @@ function handlePostback(event) {
 			break
 
 		case "requestapprove":
-			let responseMessages = util.handleApproveSongRequest(load)
-			setTimeout(function() {
-				for (let message of responseMessages) {
-					sendSingleMessage(message.senderId, message.messageContent)
-				}
-			}, 1000);
+			util.handleApproveSongRequest(load)
+				.then(function(responseMessages) {
+					for (let message of responseMessages) {
+						sendSingleMessage(message.senderId, message.messageContent)
+					}
+				})
 			break
 
 		case "getstarted":
