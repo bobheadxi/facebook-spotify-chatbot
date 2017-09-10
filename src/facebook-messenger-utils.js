@@ -249,7 +249,7 @@ MessengerUtilModule.prototype = {
             'playlist-modify-public'
         ]
 
-        var authoriseURL = spotifyModule.createAuthorizeURL(scopes, senderId)
+        var authoriseURL = spotifyModule.createAuthLink(scopes, senderId)
         // note on 'state = senderId': "useful for correlating requests and responses"
         // (https://developer.spotify.com/web-api/authorization-guide/)
 
