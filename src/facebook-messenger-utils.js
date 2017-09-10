@@ -141,12 +141,13 @@ MessengerUtilModule.prototype = {
     handleApproveSongRequest: function(
         approveSongRequestPayload, 
         spotifyModule = this._spotifyModule,
-        senderMessagePairMaker = this._senderMessagePairMaker
+        senderMessagePairMaker = this._senderMessagePairMaker,
+        hostList = this._hostList
     ) {
         let responseMessages = []
         let sender = approveSongRequestPayload.sender
         console.log("Postback for requestconfirm received from " + sender)
-        let host = this.__hostList.get(approveSongRequestPayload.passcode)
+        let host = hostList.get(approveSongRequestPayload.passcode)
         // host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
         // load is {passcode, sender, songId, songName, artist, preview}
 
