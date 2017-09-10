@@ -128,7 +128,10 @@ MessengerUtilModule.prototype = {
      * @param {Object} approveSongRequestPayload 
      * @return {Array} responseMessages of {senderId, responseMessage}
      */
-    handleApproveSongRequest: function(approveSongRequestPayload) {
+    handleApproveSongRequest: function(
+        approveSongRequestPayload, 
+        spotifyModule = this._spotifyModule
+    ) {
         let responseMessages = []
         let sender = approveSongRequestPayload.sender
         console.log("Postback for requestconfirm received from " + sender)
@@ -136,7 +139,7 @@ MessengerUtilModule.prototype = {
         // host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
         // load is {passcode, sender, songId, songName, artist, preview}
 
-        this._spotifyModule.approveSongRequest(host, approveSongRequestPayload.songId)
+        spotifyModule.approveSongRequest(host, approveSongRequestPayload.songId)
             .then(function(response) {
                 responseMessages.push(this._senderMessagePairMaker(
                     host.fbId,
@@ -190,9 +193,13 @@ MessengerUtilModule.prototype = {
      * @param {String} authenticationCode
      * @param {String} facebookId
      */
-    createHost: function(authenticationCode, facebookId) {
+    createHost: function(
+        authenticationCode, 
+        facebookId, 
+        spotifyModule = this._spotifyModule
+    ) {
         return new Promise(function(resolve,reject) {
-            this._spotifyModule.createHost(authenticationCode, facebookId)
+            spotifyModule.createHost(authenticationCode, facebookId)
                 .then(function(data) {
                     resolve(data)
                 }, function(err) {
@@ -224,7 +231,7 @@ MessengerUtilModule.prototype = {
         return this._songRequests.get(senderId)
     },
 
-    _loginResponse: function(senderId) {
+    _loginResponse: function(senderId, spotifyModule = this._spotifyModule) {
         var scopes = [
             'user-read-private',
             'playlist-read-collaborative', 
@@ -232,7 +239,7 @@ MessengerUtilModule.prototype = {
             'playlist-modify-public'
         ]
 
-        var authoriseURL = this._spotifyModule.createAuthorizeURL(scopes, senderId)
+        var authoriseURL = spotifyModule.createAuthorizeURL(scopes, senderId)
         // note on 'state = senderId': "useful for correlating requests and responses"
         // (https://developer.spotify.com/web-api/authorization-guide/)
 
@@ -259,7 +266,7 @@ MessengerUtilModule.prototype = {
         return messageSeries
     },
 
-    _searchResponse: function(messageText) {
+    _searchResponse: function(messageText, spotifyModule = this._spotifyModule) {
         var searchTerm = messageText.substring(6,200) // exclude word "search"
 
         let messageSeries = []
@@ -269,7 +276,7 @@ MessengerUtilModule.prototype = {
             return messageSeries
         }
         
-        this._spotifyModule.search(searchTerm)
+        spotifyModule.search(searchTerm)
             .then(function(data) {
                 let result = this._assembleSearchResponse(data)
                 for (var i = 0; i < result.length; i++)
