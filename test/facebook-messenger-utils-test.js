@@ -10,7 +10,11 @@ var MessengerUtilModule = require('../src/facebook-messenger-utils.js'),
 
 describe("Facebook Messenger Util module", function() {
     var sender = "1234", 
+        util
+
+    beforeEach(function() {
         util = new MessengerUtilModule()
+    })
 
     describe("responseBuilder()", function(done) {
         var responseDefault = strings.responseDefault, 
@@ -158,12 +162,19 @@ describe("Facebook Messenger Util module", function() {
     })
 
     describe("handleOutstandingSongRequest(...)", function(done) {
-        var senderId = 1234,
+        var senderId = "1234",
             songRequest = {
                 songId: 9876,
                 songName: "Float On",
                 artist: "Modest Mouse",
                 preview: "www.google.com"
+            },
+            host = {
+                fbId: "0899", 
+                spotifyId: "696969", 
+                playlistId: "6969", 
+                accessToken: "abcde1234", 
+                refreshToken: "abcde5678"
             }
 
         it('when user is cancelling their song request', function() {
@@ -181,7 +192,54 @@ describe("Facebook Messenger Util module", function() {
             assert.equal(false, util.hasSongRequest(senderId))
         })
 
-        it('when ')
-    })
+        it('when user enters correct host code', function() {
+            util.addSongRequest(senderId, songRequest)
+            util.addHost("6969", host)
 
+            var response = util.handleOutstandingSongRequest(
+                songRequest,
+                senderId,
+                "6969"
+            )
+
+            assert.equal(2, response.length)
+            assert.equal(senderId, response[1].senderId)
+            assert.equal(strings.requestDeliverConfirm, response[1].messageContent)
+            
+            var hostResponseAttachment = response[0].messageContent.attachment
+            assert.equal("0899", response[0].senderId)
+            assert.equal("button", hostResponseAttachment.payload.template_type)
+            assert.equal(
+                "A user has requested the song Float On by Modest Mouse",
+                hostResponseAttachment.payload.text
+            )
+            assert.deepEqual(
+                {type:"preview",url:"www.google.com",name:"Float On",artist:"Modest Mouse"},
+                JSON.parse(hostResponseAttachment.payload.buttons[0].payload)
+            )
+            
+            var secondButtonPayload = JSON.parse(hostResponseAttachment.payload.buttons[1].payload)
+            assert.equal("6969", secondButtonPayload.passcode)
+            assert.equal(senderId, secondButtonPayload.sender)
+            assert.equal("requestapprove", secondButtonPayload.type)
+
+            assert.equal(false, util.hasSongRequest(senderId))
+        })
+
+        it('when user enters invalid host code', function() {
+            util.addSongRequest(senderId, songRequest)
+            util.addHost("6969", host)
+
+            var response = util.handleOutstandingSongRequest(
+                songRequest,
+                senderId,
+                "i dunno"
+            )
+
+            assert.equal(1, response.length)
+            assert.equal(senderId, response[0].senderId)
+            assert.equal(strings.invalidHostCodeMessage, response[0].messageContent)
+            assert.equal(true, util.hasSongRequest(senderId))
+        })
+    })
 })
