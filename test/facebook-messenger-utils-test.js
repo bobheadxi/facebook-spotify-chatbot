@@ -134,9 +134,7 @@ describe("Facebook Messenger Util module", function() {
             it('create a login link', function(done){
                 var authMakerStub = sinon.stub(SpotifyModule.prototype, 'createAuthLink').callsFake(
                     function fakeSearch(scopes, senderId) {
-                        return new Promise(function(resolve, reject) {
-                            resolve("http://www.google.com/")
-                        })
+                        return "http://www.google.com/"
                     }
                 )
 
