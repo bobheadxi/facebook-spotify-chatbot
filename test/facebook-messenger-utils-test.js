@@ -6,14 +6,28 @@ var assert = require('assert'),
     strings = require('../res/strings-en.json')
 
 var MessengerUtilModule = require('../src/facebook-messenger-utils.js'),
-    SpotifyModule = require('../src/spotify-module.js')
+    SpotifyModule = require('../src/spotify-module.js'),
+    SpotifyWebApi = require("spotify-web-api-node")
+
 
 describe("Facebook Messenger Util module", function() {
     var sender = "1234", 
         util
 
+    var spotifyApiStub,
+        setupStub
+
     beforeEach(function() {
-        util = new MessengerUtilModule()
+        spotifyApiStub = sinon.createStubInstance(SpotifyWebApi)
+        setupStub = sinon.stub(SpotifyModule.prototype, 'setupCredentials').callsFake(
+            function fakeSetup() {}
+        )
+        var spotifyModule = new SpotifyModule(spotifyApiStub)
+        util = new MessengerUtilModule(spotifyModule)
+    })
+
+    afterEach(function() {
+        setupStub.restore();
     })
 
     describe("responseBuilder()", function(done) {

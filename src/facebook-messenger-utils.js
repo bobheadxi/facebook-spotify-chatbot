@@ -7,8 +7,11 @@ var SpotifyModule = require('./spotify-module.js'),
  * Provides message builders, interaction with Spotify, user tracking
  * @name MessengerUtilModule
  */
-function MessengerUtilModule() {
-    this._spotifyModule = new SpotifyModule()
+function MessengerUtilModule(
+    spotifyModule = new SpotifyModule()
+) {
+    this._spotifyModule = spotifyModule
+    this._spotifyModule.setupCredentials()
 
     /**
      * Map of sender_id that the bot is waiting for a passphrase from
