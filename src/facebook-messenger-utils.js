@@ -167,7 +167,7 @@ MessengerUtilModule.prototype = {
                         "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
                     ))
                     resolve(responseMessages)
-                }.catch(function(err) {
+                }).catch(function(err) {
                     responseMessages.push(senderMessagePairMaker(
                         sender, strings.requestApproveError
                     ))
@@ -176,7 +176,6 @@ MessengerUtilModule.prototype = {
                     ))
                     resolve(responseMessages)
                 })
-            )
         })
     },
 
