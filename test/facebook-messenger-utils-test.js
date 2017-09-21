@@ -330,4 +330,13 @@ describe("Facebook Messenger Util module", function() {
             done()
         })
     })
+
+    describe("audioAttachmentResponse(...)", function() {
+        it('places link in appropriate JSON format', function() {
+            var link = "www.google.com"
+            var response = util.audioAttachmentResponse(link)
+            assert.equal("audio", response.attachment.type)
+            assert.equal(link, response.attachment.payload.url)
+        })
+    })
 })
