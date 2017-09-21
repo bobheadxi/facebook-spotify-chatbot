@@ -298,7 +298,7 @@ describe("Facebook Messenger Util module", function() {
                         reject("Bad thing happened")
                     })
                 }
-            )   
+            )
             util.addHost("0899", host)
             var responses = util.handleApproveSongRequest(request)
 
@@ -312,6 +312,22 @@ describe("Facebook Messenger Util module", function() {
             })
             approveStub.restore()
         })
-        
+    })
+
+    describe("createHost(...)", function() {
+        it('Host creation calls SpotifyModule', function(done) {
+            var createHostStub = sinon.stub(SpotifyModule.prototype, 'createHost').callsFake(
+                function fakeCreate(a, id) {
+                    return new Promise(function(resolve, reject) {
+                        resolve({
+                            // some host data
+                         })
+                    })
+                }
+            )
+            util.createHost("123", "123")
+            assert(createHostStub.called)
+            done()
+        })
     })
 })
