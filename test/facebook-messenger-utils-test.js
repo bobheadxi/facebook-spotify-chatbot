@@ -9,7 +9,6 @@ var MessengerUtilModule = require('../src/facebook-messenger-utils.js'),
     SpotifyModule = require('../src/spotify-module.js'),
     SpotifyWebApi = require("spotify-web-api-node")
 
-
 describe("Facebook Messenger Util module", function() {
     var sender = "1234", 
         util
@@ -178,7 +177,7 @@ describe("Facebook Messenger Util module", function() {
     describe("handleOutstandingSongRequest(...)", function(done) {
         var senderId = "1234",
             songRequest = {
-                songId: 9876,
+                songId: "9876",
                 songName: "Float On",
                 artist: "Modest Mouse",
                 preview: "www.google.com"
@@ -255,5 +254,64 @@ describe("Facebook Messenger Util module", function() {
             assert.equal(strings.invalidHostCodeMessage, response[0].messageContent)
             assert.equal(true, util.hasSongRequest(senderId))
         })
+    })
+
+    describe("handleApproveSongRequest(...)", function(done) {
+        var host = {
+            fbId: "0899", 
+            spotifyId: "696969", 
+            playlistId: "6969", 
+            accessToken: "abcde1234", 
+            refreshToken: "abcde5678"
+        }
+        var request = {
+            sender: "1234", 
+            passcode: "0899",
+            songId: "abcde123",
+            songName: "Float On"
+        }
+
+        it('when song request is approved, notify users and call SpotifyModule.approveSongRequest', function(done) {
+            var approveStub = sinon.stub(SpotifyModule.prototype, 'approveSongRequest').callsFake(
+                function fakeApprove(h, id) {
+                    return new Promise(function(resolve, reject) {
+                        resolve()
+                    })
+                }
+            )
+            util.addHost("0899", host)
+
+            util.handleApproveSongRequest(request)
+            .then(function(responses) {
+                assert.equal(2, responses.length)
+                assert.equal(host.fbId, responses[0].senderId)
+                assert.equal(request.sender, responses[1].senderId)
+                done()
+            })
+            approveStub.restore()
+        })
+
+        it('when song request approval errors out, notify users', function(done) {
+            var approveStub = sinon.stub(SpotifyModule.prototype, 'approveSongRequest').callsFake(
+                function fakeApprove(h, id) {
+                    return new Promise(function(resolve, reject) {
+                        reject("Bad thing happened")
+                    })
+                }
+            )   
+            util.addHost("0899", host)
+            var responses = util.handleApproveSongRequest(request)
+
+            util.handleApproveSongRequest(request)
+            .then(function(responses) {
+                assert.equal(2, responses.length)
+                assert.equal(host.fbId, responses[1].senderId)
+                assert.equal(request.sender, responses[0].senderId)
+                assert.equal(strings.requestApproveError, responses[0].messageContent)
+                done()
+            })
+            approveStub.restore()
+        })
+        
     })
 })
