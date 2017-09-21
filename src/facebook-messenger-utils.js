@@ -7,8 +7,11 @@ var SpotifyModule = require('./spotify-module.js'),
  * Provides message builders, interaction with Spotify, user tracking
  * @name MessengerUtilModule
  */
-function MessengerUtilModule() {
-    this._spotifyModule = new SpotifyModule()
+function MessengerUtilModule(
+    spotifyModule = new SpotifyModule()
+) {
+    this._spotifyModule = spotifyModule
+    this._spotifyModule.setupCredentials()
 
     /**
      * Map of sender_id that the bot is waiting for a passphrase from
@@ -146,14 +149,15 @@ MessengerUtilModule.prototype = {
     ) {
         let responseMessages = []
         let sender = approveSongRequestPayload.sender
-        console.log("Postback for requestconfirm received from " + sender)
-        let host = hostList.get(approveSongRequestPayload.passcode)
+        // TODO: what happens if host doesn't exist anymore?
+        let host = hostList.get(approveSongRequestPayload.passcode) 
         // host is {fbId, spotifyId, playlistId, accessToken, refreshToken, sender}
         // load is {passcode, sender, songId, songName, artist, preview}
 
         return new Promise(function(resolve, reject) {
             spotifyModule.approveSongRequest(host, approveSongRequestPayload.songId)
                 .then(function(response) {
+                    console.log("Succesful song approval")
                     responseMessages.push(senderMessagePairMaker(
                         host.fbId,
                         approveSongRequestPayload.songName + " has been added to your playlist."
@@ -163,7 +167,7 @@ MessengerUtilModule.prototype = {
                         "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
                     ))
                     resolve(responseMessages)
-                }, function(err) {
+                }).catch(function(err) {
                     responseMessages.push(senderMessagePairMaker(
                         sender, strings.requestApproveError
                     ))
@@ -171,8 +175,7 @@ MessengerUtilModule.prototype = {
                         host.fbId, strings.requestApproveError
                     ))
                     resolve(responseMessages)
-                }
-            )
+                })
         })
     },
 

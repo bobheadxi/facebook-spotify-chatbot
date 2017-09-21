@@ -8,26 +8,31 @@ var SpotifyWebApi = require("spotify-web-api-node")
  * Provides access to Spotify API via spotify-web-api-node
  * @name SpotifyModule
  */
-function SpotifyModule() {
-    this._spotifyApi = new SpotifyWebApi({
+function SpotifyModule(
+    spotifyApi = new SpotifyWebApi({
         clientId : process.env.SPOTIFY_CLIENT_ID,
         clientSecret : process.env.SPOTIFY_CLIENT_SECRET,
         redirectUri : process.env.SPOTIFY_REDIRECT_URI
     })
-    var module = this
-
-    this._spotifyApi.clientCredentialsGrant()
-    .then(function(data) {
-        console.log("Spotify access token request success!")
-        var spotifyClientAccessToken = data.body['access_token']
-        module._spotifyClientAccessToken = spotifyClientAccessToken
-        module._spotifyApi.setAccessToken(spotifyClientAccessToken)  
-    }).catch(function(err) {
-        console.error("Spotify access token request error", err)
-    })
+) {
+    this._spotifyApi = spotifyApi
 }
 
 SpotifyModule.prototype = {
+    setupCredentials: function(
+        module = this
+    ) {
+        this._spotifyApi.clientCredentialsGrant()
+        .then(function(data) {
+            console.log("Spotify access token request success!")
+            var spotifyClientAccessToken = data.body['access_token']
+            module._spotifyClientAccessToken = spotifyClientAccessToken
+            module._spotifyApi.setAccessToken(spotifyClientAccessToken)  
+        }).catch(function(err) {
+            console.error("Spotify access token request error", err)
+        })
+    },
+
     /**
      * Request auth codes, get user info, create playlist, save everything, set auth back to client
      * @param {String} authenticationCode
