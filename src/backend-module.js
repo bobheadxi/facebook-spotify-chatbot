@@ -44,7 +44,7 @@ BackendModule.prototype = {
         .then(function(hostData) {
             module._sendSingleMessage(
                 facebookId, 
-                string = eval('`'+strings.authenticationComplete+'`')
+                eval('`'+strings.authenticationComplete+'`')
             )
             this._util.addHost(String(passcode), hostData)
             
@@ -112,7 +112,7 @@ BackendModule.prototype = {
         switch (load.type) {
             case "preview":
                 if (load.url.includes("mp3-preview")) {
-                    module._sendSingleMessage(senderId, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
+                    module._sendSingleMessage(senderId, eval('`'+strings.previewDescription+'`'))
                     module._sendSingleMessage(senderId, this._util.audioAttachmentResponse(load.url))
                 } else {
                     module._sendSingleMessage(senderId, strings.noPreviewAvailableMessage)

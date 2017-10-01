@@ -104,16 +104,16 @@ MessengerUtilModule.prototype = {
                     type: "template", 
                     payload: { 
                         template_type: "button", 
-                        text: "A user has requested the song " + songRequest.songName + " by " + songRequest.artist, 
+                        text: eval('`'+strings.songRequestNotification+'`'), 
                         buttons: [
                             { 
                                 type: "postback", 
-                                title: "Preview", 
+                                title: strings.buttonPreview, 
                                 payload: '{"type": "preview","url": "' + songRequest.preview + '","name": "' + songRequest.songName + '","artist": "' + songRequest.artist + '"}' 
                             }, 
                             { 
                                 type: "postback", 
-                                title: "Approve Song", 
+                                title: strings.buttonApproveSong, 
                                 payload: JSON.stringify(songRequest) 
                             }
                         ] 
@@ -160,11 +160,11 @@ MessengerUtilModule.prototype = {
                     console.log("Succesful song approval")
                     responseMessages.push(senderMessagePairMaker(
                         host.fbId,
-                        approveSongRequestPayload.songName + " has been added to your playlist."
+                        eval('`'+strings.songRequestApproveConfirm+'`')
                     ))
                     responseMessages.push(senderMessagePairMaker(
                         sender,
-                        "Your song request for " + approveSongRequestPayload.songName + " has been approved!"
+                        eval('`'+strings.songRequestApproved+'`')
                     ))
                     resolve(responseMessages)
                 }).catch(function(err) {
@@ -268,11 +268,11 @@ MessengerUtilModule.prototype = {
                 "type":"template",
                 "payload":{
                     "template_type":"button",
-                    "text":"Click this button to log in and create a new playlist!",
+                    "text":strings.login,
                     "buttons":[
                         {
                             "type":"web_url",
-                            "title":"Log in to Spotify",
+                            "title":buttonLogin,
                             "url":authoriseURL
                         }
                     ]
