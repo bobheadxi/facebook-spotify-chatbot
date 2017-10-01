@@ -89,9 +89,9 @@ BackendModule.prototype = {
         
         module._typingIndicator(senderId, false)
     
-        if (this._util.hasSongRequest(senderId)) {
-            let songRequest = this._util.getSongRequest(senderId)
-            let responseMessages = this._util.handleOutstandingSongRequest(songRequest, senderId, messageText)
+        if (module._util.hasSongRequest(senderId)) {
+            let songRequest = module._util.getSongRequest(senderId)
+            let responseMessages = module._util.handleOutstandingSongRequest(songRequest, senderId, messageText)
             for (let message of responseMessages) {
                 console.error(message.senderId + " " + message.messageContent)
                 module._sendSingleMessage(message.senderId, message.messageContent)
@@ -99,9 +99,9 @@ BackendModule.prototype = {
             return
         }
     
-        let messageDataSeries = this._util.responseBuilder(senderId, messageText)
+        let messageDataSeries = module._util.responseBuilder(senderId, messageText)
         setTimeout(function() {
-            sendMultipleMessages(senderId, messageDataSeries, 0)
+            module._sendMultipleMessages(senderId, messageDataSeries, 0)
         }, 300)
     },
 
