@@ -44,7 +44,7 @@ BackendModule.prototype = {
         .then(function(hostData) {
             module._sendSingleMessage(
                 facebookId, 
-                string = `${(strings.authenticationComplete)}`
+                string = eval('`'+strings.authenticationComplete+'`')
             )
             this._util.addHost(String(passcode), hostData)
             

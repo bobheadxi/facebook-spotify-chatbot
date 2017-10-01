@@ -8,23 +8,15 @@ var assert = require('assert'),
 var BackendModule = require('../src/backend-module.js'),
     MessengerUtilModule = require('../src/facebook-messenger-utils.js')
 
-
-
 describe("Backend module", function() {
-
-
     var messengerUtilStub
 
     beforeEach(function() {
-
+        backend = new BackendModule()
     })
 
     afterEach(function() {
-        
+
     })
-
-
-
-
 
 })
