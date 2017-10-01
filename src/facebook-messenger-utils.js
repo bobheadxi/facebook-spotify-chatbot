@@ -104,7 +104,7 @@ MessengerUtilModule.prototype = {
                     type: "template", 
                     payload: { 
                         template_type: "button", 
-                        text: eval('`'+strings.songRequestNotification+'`'), 
+                        text: eval('`'+strings.songRequestNotif+'`'), 
                         buttons: [
                             { 
                                 type: "postback", 
@@ -272,7 +272,7 @@ MessengerUtilModule.prototype = {
                     "buttons":[
                         {
                             "type":"web_url",
-                            "title":buttonLogin,
+                            "title":strings.buttonLogin,
                             "url":authoriseURL
                         }
                     ]
