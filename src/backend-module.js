@@ -22,11 +22,11 @@ BackendModule.prototype = {
             let event = messageEvents[i]
             
             if (event.message && event.message.text) {
-                this.handleMessage(event)
+                this._handleMessage(event)
             }
             
             if (event.postback) {
-                this.handlePostback(event)
+                this._handlePostback(event)
             }
         }
     },
