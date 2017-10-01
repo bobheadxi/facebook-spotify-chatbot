@@ -33,5 +33,8 @@
 
 
     "noPreviewAvailableMessage" : "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.",
-    "spotifyConnectError": "There was a problem connecting to your Spotify account :("
+    "spotifyConnectError": "There was a problem connecting to your Spotify account :(",
+
+
+    "authenticationComplete" : "Authentication complete: your playlist passcode and name is ${passcode}. Tell your friends!"
 }

@@ -44,7 +44,7 @@ BackendModule.prototype = {
         .then(function(hostData) {
             module._sendSingleMessage(
                 facebookId, 
-                "Authentication complete: your playlist passcode and name is " + passcode + ". Tell your friends!"
+                strings.authenticationComplete
             )
             this._util.addHost(String(passcode), hostData)
             res.send("Thank you! Please return to Messenger to continue.")
