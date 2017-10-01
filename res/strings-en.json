@@ -36,5 +36,5 @@
     "spotifyConnectError": "There was a problem connecting to your Spotify account :(",
 
 
-    "authenticationComplete" : "Authentication complete: your playlist passcode and name is ${passcode}. Tell your friends!"
+    "authenticationComplete" : "`Authentication complete: your playlist passcode and name is ${passcode}. Tell your friends!`"
 }

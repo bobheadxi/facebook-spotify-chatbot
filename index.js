@@ -6,9 +6,6 @@ var express = require('express'),
 	strings = require('./res/strings-en.json'),
 	BackendModule = require('./src/backend-module.js')
 
-const fbToken = process.env.FB_TOKEN,
-	  fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
-
 var last_updated = new Date(),
     backendModule = new BackendModule()
 
@@ -51,4 +48,5 @@ app.get('/callback/', function(req, res) {
 		facebookId = req.query.state
 		
 	backendModule.handleCreateHost(authenticationCode, facebookId)
+	res.send("Thank you! Please return to Messenger to continue.")
 })

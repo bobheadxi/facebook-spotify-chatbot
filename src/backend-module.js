@@ -44,13 +44,12 @@ BackendModule.prototype = {
         .then(function(hostData) {
             module._sendSingleMessage(
                 facebookId, 
-                strings.authenticationComplete
+                string = `${(strings.authenticationComplete)}`
             )
             this._util.addHost(String(passcode), hostData)
-            res.send("Thank you! Please return to Messenger to continue.")
+            
         }, function(err) {
             module._sendSingleMessage(facebookId, strings.spotifyConnectError)
-            res.send("Sorry, something went wrong.")
         })
     },
 
