@@ -46,7 +46,7 @@ BackendModule.prototype = {
                 facebookId, 
                 eval('`'+strings.authenticationComplete+'`')
             )
-            this._util.addHost(String(passcode), hostData)
+            module._util.addHost(String(passcode), hostData)
             
         }, function(err) {
             module._sendSingleMessage(facebookId, strings.spotifyConnectError)
