@@ -2,6 +2,9 @@ var strings = require('../res/strings-en.json'),
     request = require('request'),
     MessengerUtilModule = require('./facebook-messenger-utils.js')
 
+const fbToken = process.env.FB_TOKEN,
+    fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
+
 function BackendModule(
     messengerUtilModule = new MessengerUtilModule
 ) {
