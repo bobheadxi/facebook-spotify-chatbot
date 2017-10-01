@@ -1,6 +1,6 @@
 var strings = require('../res/strings-en.json'),
     request = require('request'),
-    MessengerUtilModule = require('./src/facebook-messenger-utils.js')
+    MessengerUtilModule = require('./facebook-messenger-utils.js')
 
 function BackendModule(
     messengerUtilModule = new MessengerUtilModule
