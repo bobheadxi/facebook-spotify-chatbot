@@ -40,13 +40,13 @@ BackendModule.prototype = {
         // TODO: better code generation
         let passcode = facebookId.substring(4,8)
         
-        util.createHost(authenticationCode, facebookId)
+        this._util.createHost(authenticationCode, facebookId)
         .then(function(hostData) {
             module._sendSingleMessage(
                 facebookId, 
                 "Authentication complete: your playlist passcode and name is " + passcode + ". Tell your friends!"
             )
-            util.addHost(String(passcode), hostData)
+            this._util.addHost(String(passcode), hostData)
             res.send("Thank you! Please return to Messenger to continue.")
         }, function(err) {
             module._sendSingleMessage(facebookId, strings.spotifyConnectError)
@@ -89,9 +89,9 @@ BackendModule.prototype = {
         
         module._typingIndicator(senderId, false)
     
-        if (util.hasSongRequest(senderId)) {
-            let songRequest = util.getSongRequest(senderId)
-            let responseMessages = util.handleOutstandingSongRequest(songRequest, senderId, messageText)
+        if (this._util.hasSongRequest(senderId)) {
+            let songRequest = this._util.getSongRequest(senderId)
+            let responseMessages = this._util.handleOutstandingSongRequest(songRequest, senderId, messageText)
             for (let message of responseMessages) {
                 console.error(message.senderId + " " + message.messageContent)
                 module._sendSingleMessage(message.senderId, message.messageContent)
@@ -99,7 +99,7 @@ BackendModule.prototype = {
             return
         }
     
-        let messageDataSeries = util.responseBuilder(senderId, messageText)
+        let messageDataSeries = this._util.responseBuilder(senderId, messageText)
         setTimeout(function() {
             sendMultipleMessages(senderId, messageDataSeries, 0)
         }, 300)
@@ -114,7 +114,7 @@ BackendModule.prototype = {
             case "preview":
                 if (load.url.includes("mp3-preview")) {
                     module._sendSingleMessage(senderId, "Here's a preview of '" + load.name + "' by " + load.artist + ":")
-                    module._sendSingleMessage(senderId, util.audioAttachmentResponse(load.url))
+                    module._sendSingleMessage(senderId, this._util.audioAttachmentResponse(load.url))
                 } else {
                     module._sendSingleMessage(senderId, strings.noPreviewAvailableMessage)
                 }
@@ -122,12 +122,12 @@ BackendModule.prototype = {
 
             case "request":
                 //TODO: save in database instead
-                if (util.hasSongRequest(senderId)) {
+                if (this._util.hasSongRequest(senderId)) {
                     module._sendSingleMessage(senderId, strings.noHostCodeSentMessage)
                     break
                 }
                 
-                util.addSongRequest(senderId, 
+                this._util.addSongRequest(senderId, 
                     {
                         songId: load.id,
                         songName: load.name,
