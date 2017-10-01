@@ -1,4 +1,4 @@
-var strings = require('./res/strings-en.json'),
+var strings = require('../res/strings-en.json'),
     request = require('request'),
     MessengerUtilModule = require('./src/facebook-messenger-utils.js')
 
