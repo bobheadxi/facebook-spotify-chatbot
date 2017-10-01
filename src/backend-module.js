@@ -113,7 +113,7 @@ BackendModule.prototype = {
             case "preview":
                 if (load.url.includes("mp3-preview")) {
                     module._sendSingleMessage(senderId, eval('`'+strings.previewDescription+'`'))
-                    module._sendSingleMessage(senderId, this._util.audioAttachmentResponse(load.url))
+                    module._sendSingleMessage(senderId, module._util.audioAttachmentResponse(load.url))
                 } else {
                     module._sendSingleMessage(senderId, strings.noPreviewAvailableMessage)
                 }
@@ -126,7 +126,7 @@ BackendModule.prototype = {
                     break
                 }
                 
-                this._util.addSongRequest(senderId, 
+                module._util.addSongRequest(senderId, 
                     {
                         songId: load.id,
                         songName: load.name,
@@ -137,7 +137,7 @@ BackendModule.prototype = {
                 break
 
             case "requestapprove":
-                util.handleApproveSongRequest(load)
+                module._util.handleApproveSongRequest(load)
                     .then(function(responseMessages) {
                         for (let message of responseMessages) {
                             module._sendSingleMessage(message.senderId, message.messageContent)
