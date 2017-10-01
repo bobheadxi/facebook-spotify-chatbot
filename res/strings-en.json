@@ -16,6 +16,7 @@
     ],
     "responseUnknown": "Sorry, I don't know how to do that yet :(",
 
+    "login": "Click this button to log in and create a new playlist!",
 
     "noSearchTerm": "Please enter something for me to search after the word 'Search'",
     "noSearchResult": "I couldn't find anything, sorry :(",
@@ -33,5 +34,16 @@
 
 
     "noPreviewAvailableMessage" : "Sorry, no preview is available for this song. You can tap the album art to open the song in Spotify.",
-    "spotifyConnectError": "There was a problem connecting to your Spotify account :("
+    "spotifyConnectError": "There was a problem connecting to your Spotify account :(",
+
+    "buttonApproveSong": "Approve Song",
+    "buttonPreview": "Preview",
+    "buttonLogin": "Log in to Spotify",
+    
+
+    "authenticationComplete" : "Authentication complete: your playlist passcode and name is ${passcode}. Tell your friends!",
+    "previewDescription": "Here's a preview of '${load.name}' by ${load.artist}:",
+    "songRequestNotif": "A user has requested the song ${songRequest.songName} by ${songRequest.artist}",
+    "songRequestApproveConfirm": "${approveSongRequestPayload.songName} has been added to your playlist.",
+    "songRequestApproved": "Your song request for ${approveSongRequestPayload.songName} has been approved!"
 }
