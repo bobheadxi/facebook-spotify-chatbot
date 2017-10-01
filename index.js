@@ -3,7 +3,7 @@
 var express = require('express'),
 	bodyParser = require('body-parser'),
 	app = express(),
-	strings = require('./res/strings-en.json')
+	strings = require('./res/strings-en.json'),
 	BackendModule = require('./src/backend-module.js')
 
 const fbToken = process.env.FB_TOKEN,
