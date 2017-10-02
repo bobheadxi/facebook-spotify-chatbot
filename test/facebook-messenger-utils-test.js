@@ -194,7 +194,6 @@ describe("Facebook Messenger Util module", function() {
             util.addSongRequest(senderId, songRequest)
 
             var response = util.handleOutstandingSongRequest(
-                songRequest,
                 senderId,
                 "cancel"
             )
@@ -210,7 +209,6 @@ describe("Facebook Messenger Util module", function() {
             util.addHost("6969", host)
 
             var response = util.handleOutstandingSongRequest(
-                songRequest,
                 senderId,
                 "6969"
             )
@@ -244,7 +242,6 @@ describe("Facebook Messenger Util module", function() {
             util.addHost("6969", host)
 
             var response = util.handleOutstandingSongRequest(
-                songRequest,
                 senderId,
                 "i dunno"
             )

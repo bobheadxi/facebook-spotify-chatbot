@@ -98,7 +98,6 @@ BackendModule.prototype = {
         if (module._util.hasSongRequest(senderId)) {
             let responseMessages = module._util.handleOutstandingSongRequest(senderId, messageText)
             for (let message of responseMessages) {
-                console.error(message.senderId + " " + message.messageContent)
                 module._sendSingleMessage(message.senderId, message.messageContent)
             }
             return
