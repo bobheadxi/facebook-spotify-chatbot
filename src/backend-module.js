@@ -5,8 +5,15 @@ var strings = require('../res/strings-en.json'),
 const fbToken = process.env.FB_TOKEN,
     fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
 
+/**
+ * The Backend Module decides what to do with events
+ * and sends messages if needed. Uses services provided
+ * by the MessengerUtilModule
+ * @name BackendModule
+ * @param {*} messengerUtilModule 
+ */
 function BackendModule(
-    messengerUtilModule = new MessengerUtilModule
+    messengerUtilModule = new MessengerUtilModule()
 ) {
     this._util = messengerUtilModule
 }
@@ -89,10 +96,8 @@ BackendModule.prototype = {
         module._typingIndicator(senderId, false)
     
         if (module._util.hasSongRequest(senderId)) {
-            let songRequest = module._util.getSongRequest(senderId)
-            let responseMessages = module._util.handleOutstandingSongRequest(songRequest, senderId, messageText)
+            let responseMessages = module._util.handleOutstandingSongRequest(senderId, messageText)
             for (let message of responseMessages) {
-                console.error(message.senderId + " " + message.messageContent)
                 module._sendSingleMessage(message.senderId, message.messageContent)
             }
             return
