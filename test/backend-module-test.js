@@ -9,18 +9,30 @@ var BackendModule = require('../src/backend-module.js'),
     MessengerUtilModule = require('../src/facebook-messenger-utils.js')
 
 describe("Backend module", function() {
-    var messengerUtilStub
+    var messengerUtilStub,
+        backend
 
     beforeEach(function() {
-        backend = new BackendModule()
+        messengerUtilStub = sinon.createStubInstance(MessengerUtilModule)
+        backend = new BackendModule(messengerUtilStub)
     })
 
     afterEach(function() {
 
     })
 
-    describe("Message event handling", function() {
-            
+    describe("Handle events", function() {
+        describe("messages", function() {
+            it("handle outstanding song request if existing", function(done) { 
+                setupStub = sinon.stub(SpotifyModule.prototype, 'hasSongRequest').callsFake(
+                    function fakeSetup() {return false}
+                )
+            })
+        })
+
+        describe("events handling", function() { 
+
+        })
     })
 
 })

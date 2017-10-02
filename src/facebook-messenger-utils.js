@@ -75,17 +75,16 @@ MessengerUtilModule.prototype = {
 
     /**
      * Checks if Facebook user has outstanding song request
-     * @param {Object} songRequest
      * @param {String} senderId
      * @param {String} messageText
      * @return {Array} responseMessages of {senderId, responseMessage}
      */
     handleOutstandingSongRequest: function(
-        songRequest, 
         senderId, 
         messageText,
         senderMessagePairMaker = this._senderMessagePairMaker
     ) {
+        let songRequest = this.getSongRequest(senderId)
         let responseMessages = []
         if (messageText.toLowerCase() === "cancel") {
             this._songRequests.delete(senderId)

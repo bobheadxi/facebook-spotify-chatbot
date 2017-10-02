@@ -96,8 +96,7 @@ BackendModule.prototype = {
         module._typingIndicator(senderId, false)
     
         if (module._util.hasSongRequest(senderId)) {
-            let songRequest = module._util.getSongRequest(senderId)
-            let responseMessages = module._util.handleOutstandingSongRequest(songRequest, senderId, messageText)
+            let responseMessages = module._util.handleOutstandingSongRequest(senderId, messageText)
             for (let message of responseMessages) {
                 console.error(message.senderId + " " + message.messageContent)
                 module._sendSingleMessage(message.senderId, message.messageContent)
