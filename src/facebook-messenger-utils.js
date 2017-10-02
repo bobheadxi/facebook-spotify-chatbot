@@ -6,6 +6,7 @@ var SpotifyModule = require('./spotify-module.js'),
 /**
  * Provides message builders, interaction with Spotify, user tracking
  * @name MessengerUtilModule
+ * @param {*} spotifyModule
  */
 function MessengerUtilModule(
     spotifyModule = new SpotifyModule()

@@ -19,4 +19,8 @@ describe("Backend module", function() {
 
     })
 
+    describe("Message event handling", function() {
+            
+    })
+
 })
