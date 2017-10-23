@@ -1,4 +1,6 @@
 # Facebook Chatbot with Spotify Integration
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/bobheadxi/facebook-spotify-chatbot.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/bobheadxi/facebook-spotify-chatbot.svg?branch=dev)](https://travis-ci.org/bobheadxi/facebook-spotify-chatbot) [![Coverage Status](https://coveralls.io/repos/github/bobheadxi/facebook-spotify-chatbot/badge.svg?branch=dev)](https://coveralls.io/github/bobheadxi/facebook-spotify-chatbot?branch=dev)
 ## Current Features
 ##### v0.2
