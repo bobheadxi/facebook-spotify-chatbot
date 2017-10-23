@@ -19,7 +19,7 @@
   "devDependencies": {
     "assert": "*",
     "chai": "*",
-    "coveralls": "^2.13.1",
+    "coveralls": "^3.0.0",
     "heroku-cli-util": "*",
     "mocha": "*",
     "istanbul": "*",
