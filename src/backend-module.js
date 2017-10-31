@@ -1,6 +1,6 @@
 var strings = require('../res/strings-en.json'),
     request = require('request'),
-    MessengerUtilModule = require('./facebook-messenger-utils.js')
+    messenger = require('./facebook-messenger-utils.js')
 
 const fbToken = process.env.FB_TOKEN,
     fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
@@ -12,8 +12,8 @@ const fbToken = process.env.FB_TOKEN,
  * @name BackendModule
  * @param {*} messengerUtilModule 
  */
-export default class BackendModule {
-    constructor(messengerUtilModule=new MessengerUtilModule()) {
+class BackendModule {
+    constructor(messengerUtilModule=new messenger.MessengerUtilModule()) {
         this._util = messengerUtilModule
     }
     /**
@@ -243,3 +243,5 @@ export default class BackendModule {
         })
     }
 }
+
+module.exports = {BackendModule}

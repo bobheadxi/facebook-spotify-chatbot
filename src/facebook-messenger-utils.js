@@ -1,6 +1,6 @@
 'use strict'
 
-var SpotifyModule = require('./spotify-module.js'),
+var spotify = require('./spotify-module.js'),
     strings = require('../res/strings-en.json')
 
 /**
@@ -8,8 +8,8 @@ var SpotifyModule = require('./spotify-module.js'),
  * @name MessengerUtilModule
  * @param {*} spotifyModule
  */
-export default class MessengerUtilModule {
-    constructor(spotifyModule=new SpotifyModule()){
+class MessengerUtilModule {
+    constructor(spotifyModule=new spotify.SpotifyModule()){
         this._spotifyModule = spotifyModule
         this._spotifyModule.setupCredentials()
 
@@ -368,3 +368,5 @@ export default class MessengerUtilModule {
         }
     }
 }
+
+module.exports = {MessengerUtilModule}

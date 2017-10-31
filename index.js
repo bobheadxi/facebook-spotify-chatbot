@@ -4,10 +4,10 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	app = express(),
 	strings = require('./res/strings-en.json'),
-	BackendModule = require('./src/backend-module.js')
+	backend = require('./src/backend-module.js')
 
 var last_updated = new Date(),
-    backendModule = new BackendModule()
+    backendModule = new backend.BackendModule()
 
 // Setup and start server
 app.set("port", (process.env.PORT || 3000))

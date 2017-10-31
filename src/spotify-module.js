@@ -8,7 +8,7 @@ var SpotifyWebApi = require("spotify-web-api-node")
  * Provides access to Spotify API via spotify-web-api-node
  * @name SpotifyModule
  */
-export default class SpotifyModule {
+class SpotifyModule {
     constructor(
         spotifyApi=new SpotifyWebApi({
             clientId:process.env.SPOTIFY_CLIENT_ID,
@@ -134,3 +134,5 @@ export default class SpotifyModule {
         })
     }
 }
+
+module.exports = {SpotifyModule}

@@ -5,7 +5,7 @@ var assert = require('assert'),
     sinon = require('sinon'),
     strings = require('../res/strings-en.json')
 
-var MessengerUtilModule = require('../src/facebook-messenger-utils.js'),
+var MessengerModule = require('../src/facebook-messenger-utils.js'),
     SpotifyModule = require('../src/spotify-module.js'),
     SpotifyWebApi = require("spotify-web-api-node")
 
@@ -18,11 +18,11 @@ describe("Facebook Messenger Util module", function() {
 
     beforeEach(function() {
         spotifyApiStub = sinon.createStubInstance(SpotifyWebApi)
-        setupStub = sinon.stub(SpotifyModule.prototype, 'setupCredentials').callsFake(
+        setupStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'setupCredentials').callsFake(
             function fakeSetup() {}
         )
-        var spotifyModule = new SpotifyModule(spotifyApiStub)
-        util = new MessengerUtilModule(spotifyModule)
+        var spotifyModule = new SpotifyModule.SpotifyModule(spotifyApiStub)
+        util = new MessengerModule.MessengerUtilModule(spotifyModule)
     })
 
     afterEach(function() {
@@ -54,7 +54,7 @@ describe("Facebook Messenger Util module", function() {
 
         describe("when 'Search' is 1st term", function(done) {
             it('when phrase is 2nd, should songs as messages in correct format', function(done) {
-                var searchStub = sinon.stub(SpotifyModule.prototype, 'search').callsFake(
+                var searchStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'search').callsFake(
                     function fakeSearch(t) {
                         return new Promise(function(resolve, reject) {
                             resolve(searchData3Songs)
@@ -100,7 +100,7 @@ describe("Facebook Messenger Util module", function() {
             })
     
             it('when phrase is 2nd, should not send more than 7 songs', function(done) {
-                var searchStub = sinon.stub(SpotifyModule.prototype, 'search').callsFake(
+                var searchStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'search').callsFake(
                     function fakeSearch(t) {
                         return new Promise(function(resolve, reject) {
                             resolve(searchData10Songs)
@@ -120,7 +120,7 @@ describe("Facebook Messenger Util module", function() {
             })
     
             it('when phrase is 2nd and no songs found, should return message', function(done) {
-                var searchStub = sinon.stub(SpotifyModule.prototype, 'search').callsFake(
+                var searchStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'search').callsFake(
                     function fakeSearch(t) {
                         return new Promise(function(resolve, reject) {
                             var noSongsResult = {}
@@ -149,7 +149,7 @@ describe("Facebook Messenger Util module", function() {
 
         describe("when 'Host' is first term", function(done) {
             it('create a login link', function(done){
-                var authMakerStub = sinon.stub(SpotifyModule.prototype, 'createAuthLink').callsFake(
+                var authMakerStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'createAuthLink').callsFake(
                     function fakeSearch(scopes, senderId) {
                         return "http://www.google.com/"
                     }
@@ -269,7 +269,7 @@ describe("Facebook Messenger Util module", function() {
         }
 
         it('when song request is approved, notify users and call SpotifyModule.approveSongRequest', function(done) {
-            var approveStub = sinon.stub(SpotifyModule.prototype, 'approveSongRequest').callsFake(
+            var approveStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'approveSongRequest').callsFake(
                 function fakeApprove(h, id) {
                     return new Promise(function(resolve, reject) {
                         resolve()
@@ -289,7 +289,7 @@ describe("Facebook Messenger Util module", function() {
         })
 
         it('when song request approval errors out, notify users', function(done) {
-            var approveStub = sinon.stub(SpotifyModule.prototype, 'approveSongRequest').callsFake(
+            var approveStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'approveSongRequest').callsFake(
                 function fakeApprove(h, id) {
                     return new Promise(function(resolve, reject) {
                         reject("Bad thing happened")
@@ -313,7 +313,7 @@ describe("Facebook Messenger Util module", function() {
 
     describe("createHost(...)", function() {
         it('Host creation calls SpotifyModule', function(done) {
-            var createHostStub = sinon.stub(SpotifyModule.prototype, 'createHost').callsFake(
+            var createHostStub = sinon.stub(SpotifyModule.SpotifyModule.prototype, 'createHost').callsFake(
                 function fakeCreate(a, id) {
                     return new Promise(function(resolve, reject) {
                         resolve({
