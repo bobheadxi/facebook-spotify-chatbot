@@ -8,42 +8,40 @@ var SpotifyModule = require('./spotify-module.js'),
  * @name MessengerUtilModule
  * @param {*} spotifyModule
  */
-function MessengerUtilModule(
-    spotifyModule = new SpotifyModule()
-) {
-    this._spotifyModule = spotifyModule
-    this._spotifyModule.setupCredentials()
+export default class MessengerUtilModule {
+    constructor(spotifyModule=new SpotifyModule()){
+        this._spotifyModule = spotifyModule
+        this._spotifyModule.setupCredentials()
 
-    /**
-     * Map of sender_id that the bot is waiting for a passphrase from
-     * - KEY: sender 
-     * - VAL: {songId, songName, artist, preview}
-     * @var {Map} songRequests
-     */
-    this._songRequests = new Map()
+        /**
+         * Map of sender_id that the bot is waiting for a passphrase from
+         * - KEY: sender 
+         * - VAL: {songId, songName, artist, preview}
+         * @var {Map} songRequests
+         */
+        this._songRequests = new Map()
 
-    /**
-     * Mapp of hosts and their associated passcodes and information
-     * - KEY: passcode
-     * - VAL: {fbId, spotifyId, playlistId, accessToken, refreshToken}
-     * @var {Map} hostList
-     */
-    this._hostList = new Map()
+        /**
+         * Mapp of hosts and their associated passcodes and information
+         * - KEY: passcode
+         * - VAL: {fbId, spotifyId, playlistId, accessToken, refreshToken}
+         * @var {Map} hostList
+         */
+        this._hostList = new Map()
 
-    // TODO: replace with postgresSQL database tables
-}
+        // TODO: replace with postgresSQL database tables
+    }
 
-MessengerUtilModule.prototype = {
     /**
      * Determines appropriate response message
      * @param {String} senderId 
      * @param {String} messageText
      * @return {Array} responseMessages
      */
-    responseBuilder: function(
+    responseBuilder(
         senderId, 
         messageText,
-        module = this
+        module=this
     ) {
         var keyword = messageText.toLowerCase()
         if (messageText.includes(" ")) {
@@ -62,16 +60,16 @@ MessengerUtilModule.prototype = {
             default:
                 return strings.responseDefault
         }
-    },
+    }
 
     /**
      * Determines appropriate response message
      * @param {String} senderId 
      * @param {Object} songRequest
      */
-    addSongRequest: function(senderId, songRequest) {
+    addSongRequest(senderId, songRequest) {
         this._songRequests.set(senderId, songRequest)
-    },
+    }
 
     /**
      * Checks if Facebook user has outstanding song request
@@ -79,10 +77,10 @@ MessengerUtilModule.prototype = {
      * @param {String} messageText
      * @return {Array} responseMessages of {senderId, responseMessage}
      */
-    handleOutstandingSongRequest: function(
+    handleOutstandingSongRequest(
         senderId, 
         messageText,
-        senderMessagePairMaker = this._senderMessagePairMaker
+        senderMessagePairMaker=this._senderMessagePairMaker
     ) {
         let songRequest = this.getSongRequest(senderId)
         let responseMessages = []
@@ -134,18 +132,18 @@ MessengerUtilModule.prototype = {
             ))
         }
         return responseMessages
-    },
+    }
 
     /**
      * Handles song request approval
      * @param {Object} approveSongRequestPayload 
      * @return {Promise} resolves to an array of messages
      */
-    handleApproveSongRequest: function(
+    handleApproveSongRequest(
         approveSongRequestPayload, 
-        spotifyModule = this._spotifyModule,
-        senderMessagePairMaker = this._senderMessagePairMaker,
-        hostList = this._hostList
+        spotifyModule=this._spotifyModule,
+        senderMessagePairMaker=this._senderMessagePairMaker,
+        hostList=this._hostList
     ) {
         let responseMessages = []
         let sender = approveSongRequestPayload.sender
@@ -177,14 +175,14 @@ MessengerUtilModule.prototype = {
                     resolve(responseMessages)
                 })
         })
-    },
+    }
 
     /**
      * Assembles response message for audio attachment
      * @param {String} link
      * @return {Object} messageData
      */
-    audioAttachmentResponse: function(link) {
+    audioAttachmentResponse(link) {
         let messageData = {
             "attachment": {
                 "type": "audio",
@@ -194,26 +192,26 @@ MessengerUtilModule.prototype = {
             }
         }
         return(messageData)
-    },
+    }
 
     /**
      * Adds host and host data to hostList
      * @param {String} passcode
      * @param {Object} hostData
      */
-    addHost: function(passcode, hostData) {
+    addHost(passcode, hostData) {
         this._hostList.set(passcode, hostData)
-    },
+    }
 
     /**
      * Creates 
      * @param {String} authenticationCode
      * @param {String} facebookId
      */
-    createHost: function(
+    createHost(
         authenticationCode, 
         facebookId, 
-        spotifyModule = this._spotifyModule
+        spotifyModule=this._spotifyModule
     ) {
         return new Promise(function(resolve,reject) {
             spotifyModule.createHost(authenticationCode, facebookId)
@@ -224,31 +222,31 @@ MessengerUtilModule.prototype = {
                 }
             )
         })
-    },
+    }
 
     /**
      * Checks if sender has an outstanding song request
      * @param {String} senderId
      * @return {Boolean} hasSongRequest
      */
-    hasSongRequest: function(senderId) {
+    hasSongRequest(senderId) {
         if (this._songRequests.get(senderId)) {
             return true
         } else { 
             return false
         }
-    },
+    }
 
     /**
      * Retrieves SongRequest by senderId
      * @param {String} senderId
      * @return {Boolean} hasSongRequest
      */
-    getSongRequest: function(senderId) {
+    getSongRequest(senderId) {
         return this._songRequests.get(senderId)
-    },
+    }
 
-    _loginResponse: function(senderId, spotifyModule = this._spotifyModule) {
+    _loginResponse(senderId, spotifyModule=this._spotifyModule) {
         var scopes = [
             'user-read-private',
             'playlist-read-collaborative', 
@@ -281,12 +279,12 @@ MessengerUtilModule.prototype = {
         }
         messageSeries.push(buttonTemplate)
         return messageSeries
-    },
+    }
 
-    _searchResponse: function(
+    _searchResponse(
         messageText, 
-        spotifyModule = this._spotifyModule,
-        assembleSearchResponse = this._assembleSearchResponse
+        spotifyModule=this._spotifyModule,
+        assembleSearchResponse=this._assembleSearchResponse
     ) {
         var searchTerm = messageText.substring(6,200) // exclude word "search"
 
@@ -307,9 +305,9 @@ MessengerUtilModule.prototype = {
             })
         
         return messageSeries
-    },
+    }
 
-    _assembleSearchResponse: function(searchResultData) {
+    _assembleSearchResponse(searchResultData) {
         let messageSeries = []
 
         var songTracks = searchResultData.body.tracks.items
@@ -361,14 +359,12 @@ MessengerUtilModule.prototype = {
         messageSeries.push(strings.searchResultFound)
         messageSeries.push(messageData)
         return messageSeries	
-    },
+    }
 
-    _senderMessagePairMaker: function(senderId, messageContent) {
+    _senderMessagePairMaker(senderId, messageContent) {
         return {
             senderId:senderId,
             messageContent:messageContent
         }
     }
 }
-
-module.exports = MessengerUtilModule

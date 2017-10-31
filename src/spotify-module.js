@@ -8,20 +8,18 @@ var SpotifyWebApi = require("spotify-web-api-node")
  * Provides access to Spotify API via spotify-web-api-node
  * @name SpotifyModule
  */
-function SpotifyModule(
-    spotifyApi = new SpotifyWebApi({
-        clientId : process.env.SPOTIFY_CLIENT_ID,
-        clientSecret : process.env.SPOTIFY_CLIENT_SECRET,
-        redirectUri : process.env.SPOTIFY_REDIRECT_URI
-    })
-) {
-    this._spotifyApi = spotifyApi
-}
+export default class SpotifyModule {
+    constructor(
+        spotifyApi=new SpotifyWebApi({
+            clientId:process.env.SPOTIFY_CLIENT_ID,
+            clientSecret:process.env.SPOTIFY_CLIENT_SECRET,
+            redirectUri:process.env.SPOTIFY_REDIRECT_URI
+        })
+    ){
+        this._spotifyApi = spotifyApi
+    }
 
-SpotifyModule.prototype = {
-    setupCredentials: function(
-        module = this
-    ) {
+    setupCredentials(module=this) {
         this._spotifyApi.clientCredentialsGrant()
         .then(function(data) {
             console.log("Spotify access token request success!")
@@ -31,7 +29,7 @@ SpotifyModule.prototype = {
         }).catch(function(err) {
             console.error("Spotify access token request error", err)
         })
-    },
+    }
 
     /**
      * Request auth codes, get user info, create playlist, save everything, set auth back to client
@@ -39,11 +37,11 @@ SpotifyModule.prototype = {
      * @param {String} facebookId
      * @return {Promise} hostData
      */
-    createHost: function(
+    createHost(
         authenticationCode, 
         facebookId, 
-        spotifyApi = this._spotifyApi,
-        spotifyClientAccessToken = this._spotifyClientAccessToken
+        spotifyApi=this._spotifyApi,
+        spotifyClientAccessToken=this._spotifyClientAccessToken
     ) {
         return new Promise(function(resolve, reject) {
             spotifyApi.authorizationCodeGrant(authenticationCode)
@@ -80,7 +78,7 @@ SpotifyModule.prototype = {
                     reject(err)
                 })
         })
-    },
+    }
 
     /**
      * Creates URL for users to authenticate
@@ -88,22 +86,18 @@ SpotifyModule.prototype = {
      * @param {String} state
      * @return {String} authorizeUrl
      */
-    createAuthLink: function(
-        scopes,
-        state,
-        spotifyApi = this._spotifyApi
-    ) {
+    createAuthLink(scopes,state,spotifyApi=this._spotifyApi) {
         return spotifyApi.createAuthorizeURL(scopes, state)
-    },
+    }
 
     /**
      * Conducts Spotify search
      * @param {String} searchTerm 
      * @return {Object} searchResultData
      */
-    search: function(searchTerm, spotifyApi = this._spotifyApi) {
+    search(searchTerm, spotifyApi=this._spotifyApi) {
         return spotifyApi.searchTracks(searchTerm)
-    },
+    }
 
     /**
      * Approves song request
@@ -111,11 +105,11 @@ SpotifyModule.prototype = {
      * @param {String} songId
      * @return {Promise} songRequestApprovalSuccess
      */
-    approveSongRequest: function(
+    approveSongRequest(
         host, 
         songId, 
-        spotifyApi = this._spotifyApi, 
-        spotifyClientAccessToken = this._spotifyClientAccessToken
+        spotifyApi=this._spotifyApi, 
+        spotifyClientAccessToken=this._spotifyClientAccessToken
     ) {
         return new Promise(function(resolve, reject) {
             // set auth to user, refresh token, add to playlist, set auth back to client
@@ -140,5 +134,3 @@ SpotifyModule.prototype = {
         })
     }
 }
-
-module.exports = SpotifyModule

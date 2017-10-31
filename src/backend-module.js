@@ -12,18 +12,15 @@ const fbToken = process.env.FB_TOKEN,
  * @name BackendModule
  * @param {*} messengerUtilModule 
  */
-function BackendModule(
-    messengerUtilModule = new MessengerUtilModule()
-) {
-    this._util = messengerUtilModule
-}
-
-BackendModule.prototype = {
+export default class BackendModule {
+    constructor(messengerUtilModule=new MessengerUtilModule()) {
+        this._util = messengerUtilModule
+    }
     /**
      * Handles messaging events passed from Facebook
      * @param {List} messagingEvents
      */
-    handleMessagingEvents: function(messageEvents) {
+    handleMessagingEvents(messageEvents) {
         // get all events
         for (let i = 0; i < messageEvents.length; i++) {
             let event = messageEvents[i]
@@ -36,14 +33,14 @@ BackendModule.prototype = {
                 this._handlePostback(event)
             }
         }
-    },
+    }
 
     /**
      * Sets up and manages Host creation
      * @param {String} authenticationCode
      * @param {String} facebookId
      */
-    handleCreateHost: function(authenticationCode, facebookId, module=this) {
+    handleCreateHost(authenticationCode, facebookId, module=this) {
         // TODO: better code generation
         let passcode = facebookId.substring(4,8)
         
@@ -58,12 +55,12 @@ BackendModule.prototype = {
         }, function(err) {
             module._sendSingleMessage(facebookId, strings.spotifyConnectError)
         })
-    },
+    }
 
     /**
      * Prompts Facebook to activate a Get Started page
      */
-    setGetStarted: function() {
+    setGetStarted() {
         request({
             url: 'https://graph.facebook.com/v2.6/me/messenger_profile',
             qs: {access_token:fbToken},
@@ -82,9 +79,9 @@ BackendModule.prototype = {
                 console.log("Setting 'Get Started': ", response.body.result)
             }
         })
-    },
+    }
 
-    _handleMessage: function(event, module=this) {
+    _handleMessage(event, module=this) {
         if (event.message.is_echo === true) {
             return
         }
@@ -107,9 +104,9 @@ BackendModule.prototype = {
         setTimeout(function() {
             module._sendMultipleMessages(senderId, messageDataSeries, 0)
         }, 300)
-    },
+    }
 
-    _handlePostback: function(event, module=this) {
+    _handlePostback(event, module=this) {
         let load = JSON.parse(event.postback.payload),
             senderId = event.sender.id
         console.info("Postback received of type: " + JSON.stringify(load.type) + " from " + senderId)
@@ -161,9 +158,9 @@ BackendModule.prototype = {
                 module._sendSingleMessage(senderId, strings.responseUnknown)
                 break	
         }
-    },
+    }
 
-    _sendMultipleMessages: function(senderId, messages, position, module=this) {
+    _sendMultipleMessages(senderId, messages, position, module=this) {
         console.log("Sending series: " + messages)
         if (position < messages.length) {
             module._typingIndicator(senderId, true)
@@ -196,9 +193,9 @@ BackendModule.prototype = {
         } else {
             return
         }
-    },
+    }
 
-    _sendSingleMessage: function(senderId, message) {
+    _sendSingleMessage(senderId, message) {
         if ((typeof message) == "string") {
             message = {text:message}
         }
@@ -220,9 +217,9 @@ BackendModule.prototype = {
                 console.log("Message delivered: ", message)
             }
         })
-    },
+    }
 
-    _typingIndicator: function(senderId, status) {
+    _typingIndicator(senderId, status) {
         var state
         if (status) state = "on"
         else state = "off"
@@ -246,5 +243,3 @@ BackendModule.prototype = {
         })
     }
 }
-
-module.exports = BackendModule

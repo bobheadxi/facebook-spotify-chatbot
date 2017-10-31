@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "system",
+        "module": "es6",
         "allowSyntheticDefaultImports": true
     }
 }
