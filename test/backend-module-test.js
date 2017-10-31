@@ -5,10 +5,10 @@ var assert = require('assert'),
     sinon = require('sinon'),
     strings = require('../res/strings-en.json')
 
-var BackendModule = require('../src/backend-module.js'),
-    MessengerUtilModule = require('../src/facebook-messenger-utils.js'),
-    SpotifyModule = require('../src/spotify-module.js'),
-    SpotifyWebApi = require("spotify-web-api-node")
+var backendModule = require('../src/backend-module.js'),
+    messenger = require('../src/facebook-messenger-utils.js'),
+    spotify = require('../src/spotify-module.js'),
+    spotifyApi = require("spotify-web-api-node")
 
 describe("Backend module", function() {
     var setupStub,
@@ -16,13 +16,13 @@ describe("Backend module", function() {
         backend
 
     beforeEach(function() {
-        var spotifyApiStub = sinon.createStubInstance(SpotifyWebApi)
-        setupStub = sinon.stub(SpotifyModule.prototype, 'setupCredentials').callsFake(
+        var spotifyApiStub = sinon.createStubInstance(spotifyApi)
+        setupStub = sinon.stub(spotify.SpotifyModule.prototype, 'setupCredentials').callsFake(
             function fakeSetup() {}
         )
-        var spotifyModule = new SpotifyModule(spotifyApiStub)
-        var util = new MessengerUtilModule(spotifyModule)
-        backend = new BackendModule(util)
+        var spotifyModule = new spotify.SpotifyModule(spotifyApiStub)
+        var util = new messenger.MessengerUtilModule(spotifyModule)
+        backend = new backendModule.BackendModule(util)
     })
 
     afterEach(function() {
