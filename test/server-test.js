@@ -6,11 +6,11 @@ var assert = require('assert'),
     rewire = require('rewire'),
     strings = require('../res/strings-en.json')
 
-var bot = rewire("../index.js")
+var bot = rewire("../server.js")
 
 var herokuServerUri = process.env.HEROKU_URI
 
-describe("index.js tests", function() {
+describe("server.js tests", function() {
     const fbMessageApiUrl = "https://graph.facebook.com/v2.6/me/messages"
     const fbToken = 987654321
     
