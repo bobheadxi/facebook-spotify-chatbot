@@ -2,7 +2,7 @@
   "name": "chatbot-server",
   "version": "0.0.1",
   "description": "Facebook chatbot server",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha",
     "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha"
