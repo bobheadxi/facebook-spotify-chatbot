@@ -24,7 +24,7 @@
     "istanbul": "0.4.5",
     "mocha": "^4.0.1",
     "rewire": "2.5.2",
-    "sinon": "4.1.0"
+    "sinon": "4.1.1"
   },
   "directories": {
     "test": "test"
